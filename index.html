@@ -82,7 +82,7 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 105;
-            display: flex;
+            display: flex; /* Changed to flex to stack elements, not just one */
             flex-direction: column; /* Stack buttons vertically */
             gap: 10px; /* Space between buttons */
             padding: 10px;
@@ -114,7 +114,7 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            display: none;
+            display: none; /* Hidden by default, shown if widget fails or not WebApp */
             width: fit-content;
         }
 
@@ -122,23 +122,7 @@
             background-color: #006699;
         }
 
-        /* Google Login Button */
-        #google-login-button {
-            display: block;
-            padding: 15px 30px;
-            font-size: 24px;
-            background-color: #DB4437; /* Google Red */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            width: fit-content;
-        }
-        #google-login-button:hover {
-            background-color: #c23321;
-        }
+        /* Removed Google Login Button CSS */
 
 
         /* Error message for Telegram widget */
@@ -489,8 +473,7 @@
                 bottom: 40px; /* Adjust for smaller screens */
                 gap: 8px;
             }
-            #telegram-login-button-fallback,
-            #google-login-button {
+            #telegram-login-button-fallback {
                 font-size: 20px;
                 padding: 12px 25px;
             }
@@ -520,14 +503,6 @@
                             data-request-access="write"></script>
                     <button id="telegram-login-button-fallback">Log in with Telegram</button>
                 </div>
-                <button id="google-login-button" class="g_id_signin"
-                        data-type="standard"
-                        data-size="large"
-                        data-theme="outline"
-                        data-text="sign_in_with"
-                        data-shape="rectangular"
-                        data-logo_alignment="left"
-                        onclick="initiateGoogleLogin()">Log in with Google</button>
             </div>
         </div>
     </div>
@@ -567,7 +542,7 @@
                     <span class="emoji">💰</span> Gold: <span id="resource-gold">500</span>
                 </div>
             </div>
-            </div>
+        </div>
 
         <div id="main-content">
             Welcome to your game!
@@ -622,13 +597,10 @@
         Your browser does not support audio.
     </audio>
 
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-
     <script>
         const introScreen = document.getElementById('intro-screen');
         const telegramWidgetContainer = document.getElementById('telegram-widget-container');
         const telegramLoginButtonFallback = document.getElementById('telegram-login-button-fallback');
-        const googleLoginButton = document.getElementById('google-login-button');
         const errorMessage = document.getElementById('error-message');
         const errorOkButton = document.getElementById('error-ok-button');
         const copyrightFooter = document.getElementById('copyright-footer');
@@ -641,7 +613,6 @@
         const userProfileSection = document.getElementById('user-profile-section');
         const userAvatar = document.getElementById('user-avatar');
         const userLogin = document.getElementById('user-login');
-        // const topSeasonText = document.getElementById('top-season-text'); // Removed from game interface
         const introSeasonText = document.getElementById('intro-season-text');
 
         const menuMap = document.getElementById('menu-map');
@@ -672,7 +643,6 @@
             errorMessage.style.display = 'block';
             telegramLoginButtonFallback.style.display = 'block';
             telegramWidgetContainer.style.display = 'none'; // Hide the widget container if error
-            googleLoginButton.style.display = 'none'; // Hide Google button too if error is generic
         }
 
         function hideErrorMessage() {
@@ -750,48 +720,18 @@
 
         // Telegram Auth Callback - this function is called by the Telegram widget
         function onTelegramAuth(user) {
-            console.log('Telegram User Info:', user);
+            console.log('Telegram User Info (from widget):', user);
             updateUserProfile(user);
             showVideoScreen();
             tryPlayMedia();
         }
 
-        // Google Auth Callback - This function is called by Google's GSI client when sign-in is successful.
-        function onGoogleAuth(response) {
-            console.log('Google Sign-In response:', response);
-            try {
-                const profile = JSON.parse(atob(response.credential.split('.')[1]));
-                const user = {
-                    id: profile.sub,
-                    first_name: profile.given_name || 'Google User',
-                    last_name: profile.family_name || '',
-                    username: profile.email ? profile.email.split('@')[0] : '', // Using part of email as username
-                    photo_url: profile.picture || 'https://via.placeholder.com/50/gold/black?text=G',
-                    email: profile.email
-                };
-                console.log('Decoded Google Profile:', user);
-                updateUserProfile(user);
-                showVideoScreen();
-                tryPlayMedia();
-            } catch (e) {
-                console.error("Failed to decode Google ID token:", e);
-                alert("Failed to sign in with Google. Please try again.");
-            }
-        }
-
-        function initiateGoogleLogin() {
-            playClickSound(); // Play click sound
-            // The GSI client (loaded via script) usually handles the click event on data-g_id_signin element.
-            // No need to explicitly call anything here, it's handled by Google's script.
-        }
-
-
         // --- Helper Function to Update User Profile ---
         function updateUserProfile(user) {
             if (user.photo_url) {
                 userAvatar.src = user.photo_url;
-            } else if (user.email) {
-                 userAvatar.src = `https://via.placeholder.com/50/gold/black?text=${user.email.charAt(0).toUpperCase()}`;
+            } else if (user.email) { // Fallback for Google if no photo_url, but Google login removed
+                 userAvatar.src = `https://via.placeholder.com/50/gold/black?text=${user.first_name.charAt(0).toUpperCase()}`;
             } else {
                 userAvatar.src = 'https://via.placeholder.com/50/333/gold?text=A';
             }
@@ -826,39 +766,56 @@
             item.addEventListener('click', playClickSound);
         });
 
-        // Initialize Google Sign-In (this part relies on Google's gsi.client.js)
         window.onload = function () {
-            // Google Identity Services (GSI)
-            if (google) {
-                 google.accounts.id.initialize({
-                    client_id: 'YOUR_GOOGLE_CLIENT_ID', // Replace with your actual CLIENT_ID
-                    callback: onGoogleAuth
-                });
-                // Note: The data-attributes on the button itself in HTML are often sufficient.
-            } else {
-                console.warn("Google GSI client not loaded. Google login may not function.");
-                googleLoginButton.style.display = 'none'; // Hide button if script didn't load
-            }
+            // Check if running inside Telegram WebApp
+            if (window.Telegram && window.Telegram.WebApp) {
+                console.log("Telegram WebApp detected. Attempting auto-login...");
+                telegramWidgetContainer.style.display = 'none'; // Hide the widget
+                telegramLoginButtonFallback.style.display = 'none'; // Hide the fallback button
 
-
-            // Check for Telegram widget load status
-            setTimeout(() => {
-                const telegramWidget = document.querySelector('.telegram_login_button');
-                if (!telegramWidget) {
-                    showErrorMessage();
-                    telegramLoginButtonFallback.onclick = () => {
-                        playClickSound(); // Click sound for fallback button
-                        alert('Telegram widget failed to load. Check internet/BotFather settings. If you are testing locally, this might not work.');
+                // Telegram WebApp provides user data via WebApp.initDataUnsafe.user
+                const webAppUser = window.Telegram.WebApp.initDataUnsafe.user;
+                if (webAppUser) {
+                    console.log("WebApp User Info:", webAppUser);
+                    // Map WebApp user data to our internal user structure
+                    const user = {
+                        id: webAppUser.id,
+                        first_name: webAppUser.first_name,
+                        last_name: webAppUser.last_name || '',
+                        username: webAppUser.username || '',
+                        photo_url: webAppUser.photo_url || ''
                     };
+                    updateUserProfile(user);
+                    showVideoScreen();
+                    tryPlayMedia();
                 } else {
-                    telegramLoginButtonFallback.style.display = 'none';
-                    if (window.Telegram && window.Telegram.WebApp) {
-                        console.log("Telegram WebApp detected. Attempting auto-login...");
-                        telegramWidgetContainer.style.display = 'none';
-                    }
+                    console.warn("Telegram WebApp user data not available. Showing fallback button.");
+                    showErrorMessage(); // Show error if WebApp data is missing (unlikely but good for robustness)
+                    telegramLoginButtonFallback.onclick = () => {
+                        playClickSound();
+                        alert('Could not retrieve user data from Telegram WebApp. Please try again.');
+                    };
                 }
-            }, 3000); // Wait 3 seconds to check widget
+            } else {
+                console.log("Not in Telegram WebApp. Displaying standard Telegram login widget.");
+                telegramWidgetContainer.style.display = 'block'; // Ensure the widget is visible
+                telegramLoginButtonFallback.style.display = 'none'; // Hide fallback initially, rely on widget
 
+                // Check for Telegram widget load status (if not WebApp)
+                setTimeout(() => {
+                    const telegramWidget = document.querySelector('.telegram_login_button');
+                    if (!telegramWidget) {
+                        showErrorMessage(); // Show error and fallback if widget fails to load
+                        telegramLoginButtonFallback.onclick = () => {
+                            playClickSound();
+                            alert('Telegram widget failed to load. Check internet/BotFather settings. If you are testing locally, this might not work.');
+                        };
+                    } else {
+                        // The widget loaded, hide the fallback button
+                        telegramLoginButtonFallback.style.display = 'none';
+                    }
+                }, 3000); // Wait 3 seconds to check widget
+            }
         };
 
 
