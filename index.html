@@ -36,10 +36,30 @@
             background-size: cover;
             background-position: center;
             display: flex;
-            justify-content: flex-end; /* Align to bottom for button */
+            justify-content: center; /* Center content vertically too */
             align-items: center;
             flex-direction: column;
             z-index: 100;
+        }
+
+        #intro-screen-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative; /* To position season text */
+            height: 100%; /* Take full height of intro-screen to help positioning */
+        }
+
+        #intro-season-text {
+            position: absolute;
+            top: 15%; /* Adjust as needed */
+            color: gold;
+            font-size: 2.5em; /* Larger for intro screen */
+            font-weight: bold;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         /* Telegram Login Widget Container - position at the very bottom */
@@ -246,12 +266,8 @@
             flex-shrink: 0; /* Prevent shrinking */
         }
 
-        #season-text {
-            color: gold;
-            font-size: 1.0em; /* Slightly smaller */
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-        }
+        /* Removed #season-text from top-panel as it's now on intro screen only */
+
 
         /* Top menu items (if any, not explicitly requested in this latest list but kept for structure) */
         .top-menu-item {
@@ -416,9 +432,7 @@
             .resource-item .emoji {
                 font-size: 1.0em;
             }
-            #season-text {
-                font-size: 0.9em;
-            }
+            /* #season-text is not on top-panel anymore */
             .top-menu-item {
                 font-size: 0.8em;
                 padding: 4px 8px;
@@ -438,6 +452,9 @@
             .modal-content {
                 padding: 15px;
             }
+            #intro-season-text {
+                font-size: 2em; /* Adjust for smaller screens */
+            }
         }
 
     </style>
@@ -445,18 +462,21 @@
 <body>
 
     <div id="intro-screen">
-        <div id="error-message">
-            <p>Telegram widget failed to load.</p>
-            <p>Please check your internet connection and bot domain settings in BotFather.</p>
-            <button onclick="hideErrorMessage()">OK</button>
-        </div>
-        <div id="telegram-widget-container">
-            <script async src="https://telegram.org/js/telegram-widget.js?19"
-                    data-telegram-login="Weegamemytestbot"
-                    data-size="large"
-                    data-onauth="onTelegramAuth(user)"
-                    data-request-access="write"></script>
-            <button id="telegram-login-button-fallback">Log in with Telegram</button>
+        <div id="intro-screen-content">
+            <span id="intro-season-text">SEASON 1</span>
+            <div id="error-message">
+                <p>Telegram widget failed to load.</p>
+                <p>Please check your internet connection and bot domain settings in BotFather.</p>
+                <button onclick="hideErrorMessage()">OK</button>
+            </div>
+            <div id="telegram-widget-container">
+                <script async src="https://telegram.org/js/telegram-widget.js?19"
+                        data-telegram-login="Weegamemytestbot"
+                        data-size="large"
+                        data-onauth="onTelegramAuth(user)"
+                        data-request-access="write"></script>
+                <button id="telegram-login-button-fallback">Log in with Telegram</button>
+            </div>
         </div>
     </div>
 
@@ -496,7 +516,6 @@
                 </div>
             </div>
             <div id="top-right-section">
-                <span id="season-text">SEASON 1</span>
                 </div>
         </div>
 
