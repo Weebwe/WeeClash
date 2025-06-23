@@ -198,54 +198,77 @@
         /* Top Panel */
         #top-panel {
             width: 100%;
-            height: auto; /* Adjusted to auto to fit content */
             background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            flex-direction: column; /* Stack sections vertically */
-            align-items: center; /* Center content horizontally */
-            padding: 5px 10px; /* Added vertical padding */
-            box-sizing: border-box;
             border-bottom: 2px solid gold;
-            position: relative;
+            display: flex;
+            flex-direction: column; /* Main container is column now */
+            padding: 5px 0; /* Vertical padding */
+            box-sizing: border-box;
+        }
+
+        #top-panel-row-1 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 10px; /* Horizontal padding for the row */
+            box-sizing: border-box;
+        }
+
+        #top-panel-row-2 {
+            display: flex;
+            justify-content: center; /* Center player power */
+            width: 100%;
+            padding: 5px 10px 0; /* Padding below for spacing */
+            box-sizing: border-box;
         }
 
         #user-profile-section {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            align-items: center; /* Align avatar and VIP/login horizontally */
             position: relative;
             cursor: pointer;
             flex-shrink: 0;
-            padding: 5px 0; /* Some padding around avatar/login */
+            gap: 5px; /* Space between avatar and text block */
         }
 
-        /* VIP Level positioned between resources and total score */
-        #vip-level-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin: 5px 0; /* Space above/below VIP */
-        }
-
-        #vip-level {
-            background-color: red;
-            color: white;
-            font-size: 0.9em; /* Slightly larger */
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-weight: bold;
-            z-index: 5;
-            white-space: nowrap;
+        #user-avatar-container {
+            position: relative;
+            width: 50px;
+            height: 50px;
         }
 
         #user-avatar {
-            width: 50px;
-            height: 50px;
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             background-color: #333;
             border: 2px solid gold;
             object-fit: cover;
-            margin-bottom: 3px; /* Smaller margin below avatar */
+            display: block;
+        }
+
+        #vip-level {
+            position: absolute;
+            top: -5px; /* Adjust to sit on top of the avatar border */
+            left: 50%;
+            transform: translateX(-50%); /* Center horizontally over avatar */
+            background-color: #8B0000; /* Darker red for SVIP */
+            color: white;
+            font-size: 0.7em;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+            z-index: 5;
+            white-space: nowrap;
+            border: 1px solid gold; /* Small gold border */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
+
+        #user-info-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         #user-login {
@@ -253,55 +276,80 @@
             font-size: 0.9em;
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis; /* Add ellipsis if text is too long */
+            text-overflow: ellipsis;
             max-width: 100px; /* Limit width to prevent overflow */
+            color: white; /* Make login text white */
         }
 
-        #resources-section {
+        #resources-container {
             display: flex;
-            flex-wrap: nowrap; /* Keep resources in one line */
-            justify-content: center; /* Center resources */
+            justify-content: center; /* Center resources within their section */
             gap: 8px; /* Space between resource items */
-            width: 100%; /* Take full width for centering */
+            flex-wrap: nowrap; /* Keep resources in one line */
             overflow-x: auto; /* Allow horizontal scrolling if too many resources */
-            padding-bottom: 5px; /* Space before VIP */
+            flex-grow: 1; /* Allow to take available space */
+            padding: 0 5px; /* Small padding if it scrolls */
         }
 
         .resource-item {
             display: flex;
             align-items: center;
             gap: 3px;
-            background-color: rgba(51, 51, 51, 0.7);
+            background-color: #333; /* Darker background for resource items */
             padding: 3px 6px;
             border-radius: 5px;
-            border: 1px solid rgba(255, 215, 0, 0.5);
-            font-size: 0.8em;
+            border: 1px solid gold; /* Gold border */
+            font-size: 0.85em; /* Slightly larger font */
             white-space: nowrap;
             flex-shrink: 0; /* Prevent shrinking */
+            color: #FFD700; /* Gold text for resource names */
+            box-shadow: 0 0 5px rgba(255, 215, 0, 0.3); /* Subtle glow */
         }
 
         .resource-item span {
-            color: white;
+            color: white; /* White for resource values */
         }
 
         .resource-item .emoji {
             font-size: 1.1em;
+            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5)); /* Shadow for emoji */
         }
 
-        #total-score-section {
-            width: 100%;
-            text-align: center;
+        #right-top-panel-items {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        #diamonds-display {
+            background-color: #000;
+            border: 1px solid gold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        #diamonds-display .emoji {
+            font-size: 1.2em;
+        }
+
+        #player-power {
             font-size: 1.1em;
             color: white;
-            margin-top: 5px; /* Space below VIP */
-            padding-bottom: 5px;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            padding: 5px 0; /* Vertical padding */
+            background-color: rgba(51, 51, 51, 0.7); /* Background for power */
+            border-radius: 5px;
+            width: fit-content; /* Fit content */
+            padding: 5px 15px; /* Internal padding */
+            border: 1px solid gold;
         }
-        #total-score-section span {
-             color: gold;
-             font-weight: bold;
-             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-        }
-
 
         /* Main Game Content */
         #main-content {
@@ -341,13 +389,33 @@
             flex-grow: 1;
             padding: 5px 0;
 
-            /* Animations */
-            animation: menu-item-pulse 2s infinite alternate; /* Pulse animation */
-            transition: transform 0.4s ease-out, opacity 0.2s ease; /* Transition for flip and opacity */
-            transform-style: preserve-3d; /* For 3D transform (flip) */
-            perspective: 1000px; /* For 3D transform (flip) */
-            position: relative; /* For flip content */
+            animation: menu-item-pulse 2s infinite alternate;
+            transition: transform 0.4s ease-out, opacity 0.2s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            position: relative; /* For badge positioning */
         }
+
+        /* Menu Item Badge */
+        .menu-item-badge {
+            position: absolute;
+            top: 0px; /* Adjust to sit slightly above the icon */
+            right: calc(50% - 20px); /* Adjust to position relative to center of icon */
+            transform: translateX(50%);
+            background-color: red;
+            color: white;
+            font-size: 0.7em;
+            padding: 2px 6px;
+            border-radius: 10px; /* More rounded */
+            min-width: 15px; /* Ensure it's not too small */
+            text-align: center;
+            line-height: 1;
+            z-index: 10;
+            border: 1px solid white; /* Small border for visibility */
+            box-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
+            display: none; /* Hidden by default */
+        }
+
 
         /* Hover/Active states for menu items */
         .menu-item:hover {
@@ -446,28 +514,28 @@
 
         /* Responsive adjustments */
         @media (max-width: 600px) {
-            #top-panel {
-                padding: 5px; /* Adjust padding for smaller screens */
+            #top-panel-row-1 {
+                padding: 0 5px;
             }
             #user-profile-section {
-                padding: 3px 0;
+                gap: 3px;
             }
-            #vip-level {
-                font-size: 0.8em; /* Smaller VIP font on mobile */
-                padding: 2px 6px;
-            }
-            #user-avatar {
+            #user-avatar-container {
                 width: 40px;
                 height: 40px;
             }
+            #vip-level {
+                font-size: 0.6em; /* Smaller VIP font on mobile */
+                padding: 1px 4px;
+                top: -3px;
+            }
             #user-login {
                 font-size: 0.8em;
-                max-width: 80px; /* Reduce max-width for login */
+                max-width: 70px;
             }
-            #resources-section {
+            #resources-container {
                 gap: 5px; /* Adjust gap for smaller screens */
-                padding-bottom: 3px;
-                font-size: 0.75em;
+                padding: 0 3px;
             }
             .resource-item {
                 font-size: 0.7em;
@@ -476,11 +544,25 @@
             .resource-item .emoji {
                 font-size: 1.0em;
             }
-            #total-score-section {
-                font-size: 1.0em;
-                margin-top: 3px;
-                padding-bottom: 3px;
+            #right-top-panel-items {
+                gap: 5px;
             }
+            #diamonds-display {
+                font-size: 0.8em;
+                padding: 3px 8px;
+            }
+            #diamonds-display .emoji {
+                font-size: 1.0em;
+            }
+
+            #top-panel-row-2 {
+                padding: 3px 5px 0;
+            }
+            #player-power {
+                font-size: 0.9em;
+                padding: 3px 10px;
+            }
+
             #bottom-panel {
                 height: 80px;
             }
@@ -490,6 +572,12 @@
             .menu-item .emoji-icon {
                 font-size: 35px;
             }
+            .menu-item-badge {
+                font-size: 0.6em;
+                padding: 1px 4px;
+                top: 0px;
+                right: calc(50% - 15px); /* Adjusted for smaller icons */
+            }
             #main-content {
                 font-size: 1.2em;
             }
@@ -497,7 +585,7 @@
                 padding: 15px;
             }
             #login-buttons-container {
-                bottom: 40px; /* Adjust for smaller screens */
+                bottom: 40px;
                 gap: 8px;
             }
             #telegram-login-button-fallback {
@@ -505,7 +593,7 @@
                 padding: 12px 25px;
             }
             #intro-season-text {
-                font-size: 0.8em; /* Smaller on mobile intro screen */
+                font-size: 0.8em;
                 top: 5px;
                 right: 5px;
             }
@@ -549,363 +637,8 @@
 
     <div id="game-interface">
         <div id="top-panel">
-            <div id="user-profile-section">
-                <img id="user-avatar" src="https://via.placeholder.com/50/333/gold?text=A" alt="User Avatar">
-                <span id="user-login">Guest</span>
-            </div>
-
-            <div id="resources-section">
-                <div class="resource-item">
-                    <span class="emoji">🍎</span> Food: <span id="resource-food">10000</span>
-                </div>
-                <div class="resource-item">
-                    <span class="emoji">🌳</span> Wood: <span id="resource-wood">5000</span>
-                </div>
-                <div class="resource-item">
-                    <span class="emoji">🪨</span> Stone: <span id="resource-stone">3000</span>
-                </div>
-                <div class="resource-item">
-                    <span class="emoji">⚙️</span> Metal: <span id="resource-metal">1000</span>
-                </div>
-                <div class="resource-item">
-                    <span class="emoji">💰</span> Gold: <span id="resource-gold">500</span>
-                </div>
-            </div>
-
-            <div id="vip-level-container">
-                <span id="vip-level">VIP 5</span>
-            </div>
-
-            <div id="total-score-section">
-                Total Score: <span id="total-score">0</span>
-            </div>
-        </div>
-
-        <div id="main-content">
-            Welcome to your game!
-        </div>
-
-        <div id="bottom-panel">
-            <div class="menu-item" id="menu-map">
-                <span class="emoji-icon">🗺️</span>
-                <span>World</span>
-            </div>
-            <div class="menu-item">
-                <span class="emoji-icon">📜</span>
-                <span>Quests</span>
-            </div>
-            <div class="menu-item">
-                <span class="emoji-icon">📦</span>
-                <span>Resources</span>
-            </div>
-            <div class="menu-item">
-                <span class="emoji-icon">✉️</span>
-                <span>Mail</span>
-            </div>
-            <div class="menu-item">
-                <span class="emoji-icon">🛡️</span>
-                <span>Alliance</span>
-            </div>
-        </div>
-    </div>
-
-    <div id="user-profile-modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>User Profile</h2>
-            <img id="modal-user-avatar" class="modal-avatar" src="https://via.placeholder.com/100/333/gold?text=A" alt="User Avatar">
-            <div class="modal-user-info">
-                <p>Login: <strong id="modal-user-login">N/A</strong></p>
-                <p>First Name: <strong id="modal-first-name">N/A</strong></p>
-                <p>Last Name: <strong id="modal-last-name">N/A</strong></p>
-                <p>Username: <strong id="modal-username">N/A</strong></p>
-                <p>ID: <strong id="modal-id">N/A</strong></p>
-            </div>
-        </div>
-    </div>
-
-    <audio id="background-music" loop>
-        <source src="saund/background.mp3" type="audio/mpeg">
-        Your browser does not support audio.
-    </audio>
-
-    <audio id="click-sound">
-        <source src="saund/click.mp3" type="audio/mpeg">
-        Your browser does not support audio.
-    </audio>
-
-    <script>
-        const introScreen = document.getElementById('intro-screen');
-        const telegramWidgetContainer = document.getElementById('telegram-widget-container');
-        const telegramLoginButtonFallback = document.getElementById('telegram-login-button-fallback');
-        const errorMessage = document.getElementById('error-message');
-        const errorOkButton = document.getElementById('error-ok-button');
-        const copyrightFooter = document.getElementById('copyright-footer');
-        const videoScreen = document.getElementById('video-screen');
-        const introVideo = document.getElementById('intro-video');
-        const gameInterface = document.getElementById('game-interface');
-        const backgroundMusic = document.getElementById('background-music');
-        const clickSound = document.getElementById('click-sound');
-
-        const userProfileSection = document.getElementById('user-profile-section');
-        const userAvatar = document.getElementById('user-avatar');
-        const userLogin = document.getElementById('user-login');
-        const introSeasonText = document.getElementById('intro-season-text');
-        const vipLevelSpan = document.getElementById('vip-level'); // VIP level span
-        const totalScoreSpan = document.getElementById('total-score'); // Total score span
-
-        const resourceFood = document.getElementById('resource-food');
-        const resourceWood = document.getElementById('resource-wood');
-        const resourceStone = document.getElementById('resource-stone');
-        const resourceMetal = document.getElementById('resource-metal');
-        const resourceGold = document.getElementById('resource-gold');
-
-
-        const menuMap = document.getElementById('menu-map');
-        const bottomMenuItems = document.querySelectorAll('#bottom-panel .menu-item');
-
-        const userProfileModal = document.getElementById('user-profile-modal');
-        const closeButton = userProfileModal.querySelector('.close-button');
-        const modalUserAvatar = document.getElementById('modal-user-avatar');
-        const modalUserLogin = document.getElementById('modal-user-login');
-        const modalFirstName = document.getElementById('modal-first-name');
-        const modalLastName = document.getElementById('modal-last-name');
-        const modalUsername = document.getElementById('modal-username');
-        const modalId = document.getElementById('modal-id');
-
-        let isMapIconCastle = false;
-        let audioVideoPlayed = false;
-
-        // --- Utility Functions ---
-        function formatNumber(num) {
-            if (num >= 1000000000) return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
-            if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-            if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
-            return num;
-        }
-
-        // --- Sound Functions ---
-        function playClickSound() {
-            if (clickSound) {
-                clickSound.currentTime = 0; // Rewind to start if already playing
-                clickSound.play().catch(e => console.log("Click sound play blocked:", e));
-            }
-        }
-
-        // --- UI Functions ---
-        function showErrorMessage() {
-            errorMessage.style.display = 'block';
-            telegramLoginButtonFallback.style.display = 'block';
-            telegramWidgetContainer.style.display = 'none'; // Hide the widget container if error
-        }
-
-        function hideErrorMessage() {
-            errorMessage.style.display = 'none';
-        }
-
-        function showVideoScreen() {
-            introScreen.style.display = 'none';
-            copyrightFooter.style.display = 'none';
-            videoScreen.style.display = 'block';
-        }
-
-        function showGameInterface() {
-            videoScreen.style.display = 'none';
-            gameInterface.style.display = 'flex';
-        }
-
-        function openUserProfileModal(userData) {
-            if (userData) {
-                if (userData.photo_url) {
-                    modalUserAvatar.src = userData.photo_url;
-                } else {
-                    modalUserAvatar.src = 'https://via.placeholder.com/100/333/gold?text=A';
-                }
-                modalUserLogin.textContent = userData.first_name + (userData.last_name ? ' ' + userData.last_name : '');
-                modalFirstName.textContent = userData.first_name || 'N/A';
-                modalLastName.textContent = userData.last_name || 'N/A';
-                modalUsername.textContent = userData.username ? `@${userData.username}` : 'N/A';
-                modalId.textContent = userData.id || 'N/A';
-            }
-            userProfileModal.style.display = 'flex';
-        }
-
-        function closeUserProfileModal() {
-            userProfileModal.style.display = 'none';
-            playClickSound(); // Play sound on closing modal
-        }
-
-        function tryPlayMedia() {
-            if (!audioVideoPlayed) {
-                // Attempt to play background music
-                backgroundMusic.play()
-                    .then(() => {
-                        console.log('Background music started successfully.');
-                        audioVideoPlayed = true;
-                    })
-                    .catch(error => {
-                        console.error('Error playing background music:', error);
-                    });
-
-                // Attempt to play intro video
-                introVideo.play()
-                    .then(() => {
-                        console.log('Intro video started successfully.');
-                        audioVideoPlayed = true;
-                    })
-                    .catch(error => {
-                        console.error('Error playing intro video:', error);
-                        // If video fails to play (e.g., autoplay blocked), proceed to game interface
-                        if (videoScreen.style.display === 'block') {
-                            showGameInterface();
-                        }
-                    });
-            }
-        }
-
-        // --- Update Game Data Functions ---
-        function updateUserProfile(user) {
-            if (user.photo_url) {
-                userAvatar.src = user.photo_url;
-            } else {
-                userAvatar.src = `https://via.placeholder.com/50/333/gold?text=${user.first_name.charAt(0).toUpperCase()}`;
-            }
-            userLogin.textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-            userProfileSection.userData = user;
-        }
-
-        function updateResources(food, wood, stone, metal, gold) {
-            resourceFood.textContent = formatNumber(food);
-            resourceWood.textContent = formatNumber(wood);
-            resourceStone.textContent = formatNumber(stone);
-            resourceMetal.textContent = formatNumber(metal);
-            resourceGold.textContent = formatNumber(gold);
-        }
-
-        function updateTotalScore(score) {
-            totalScoreSpan.textContent = formatNumber(score);
-        }
-
-        function updateVIPLevel(level) {
-            vipLevelSpan.textContent = `VIP ${level}`;
-        }
-
-        // --- Authentication Callbacks (from external scripts) ---
-
-        // Telegram Auth Callback - this function is called by the Telegram widget
-        function onTelegramAuth(user) {
-            console.log('Telegram User Info (from widget):', user);
-            updateUserProfile(user);
-            showVideoScreen();
-            tryPlayMedia(); // Play media after user is authorized
-        }
-
-        // --- Event Listeners and Initial Setup ---
-
-        // No global click/touchstart listener for media playback anymore,
-        // as it should start only after successful login.
-
-        // Add click sound to relevant buttons/elements
-        userProfileSection.addEventListener('click', () => {
-            playClickSound();
-            if (userProfileSection.userData) {
-                openUserProfileModal(userProfileSection.userData);
-            } else {
-                alert('User data not available. Please log in first.');
-            }
-        });
-
-        errorOkButton.addEventListener('click', playClickSound);
-        closeButton.addEventListener('click', closeUserProfileModal);
-
-        bottomMenuItems.forEach(item => {
-            item.addEventListener('click', playClickSound);
-        });
-
-        window.onload = function () {
-            // Initial resource and score update (example values)
-            updateResources(10000, 5000, 3000, 1000, 500);
-            updateTotalScore(1234567);
-            updateVIPLevel(5); // Set initial VIP level
-
-            // Check if running inside Telegram WebApp
-            if (window.Telegram && window.Telegram.WebApp) {
-                console.log("Telegram WebApp detected. Attempting auto-login...");
-                telegramWidgetContainer.style.display = 'none'; // Hide the widget
-                telegramLoginButtonFallback.style.display = 'none'; // Hide the fallback button
-
-                // Telegram WebApp provides user data via WebApp.initDataUnsafe.user
-                const webAppUser = window.Telegram.WebApp.initDataUnsafe.user;
-                if (webAppUser) {
-                    console.log("WebApp User Info:", webAppUser);
-                    // Map WebApp user data to our internal user structure
-                    const user = {
-                        id: webAppUser.id,
-                        first_name: webAppUser.first_name,
-                        last_name: webAppUser.last_name || '',
-                        username: webAppUser.username || '',
-                        photo_url: webAppUser.photo_url || ''
-                    };
-                    updateUserProfile(user);
-                    showVideoScreen();
-                    tryPlayMedia(); // Play media after user is authorized
-                } else {
-                    console.warn("Telegram WebApp user data not available. Showing fallback button.");
-                    showErrorMessage(); // Show error if WebApp data is missing (unlikely but good for robustness)
-                    telegramLoginButtonFallback.onclick = () => {
-                        playClickSound();
-                        alert('Could not retrieve user data from Telegram WebApp. Please try again.');
-                    };
-                }
-            } else {
-                console.log("Not in Telegram WebApp. Displaying standard Telegram login widget.");
-                telegramWidgetContainer.style.display = 'block'; // Ensure the widget is visible
-                telegramLoginButtonFallback.style.display = 'none'; // Hide fallback initially, rely on widget
-
-                // Check for Telegram widget load status (if not WebApp)
-                setTimeout(() => {
-                    const telegramWidget = document.querySelector('.telegram_login_button');
-                    if (!telegramWidget) {
-                        showErrorMessage(); // Show error and fallback if widget fails to load
-                        telegramLoginButtonFallback.onclick = () => {
-                            playClickSound();
-                            alert('Telegram widget failed to load. Check internet/BotFather settings. If you are testing locally, this might not work.');
-                        };
-                    } else {
-                        // The widget loaded, hide the fallback button
-                        telegramLoginButtonFallback.style.display = 'none';
-                    }
-                }, 3000); // Wait 3 seconds to check widget
-            }
-        };
-
-
-        // When intro video ends, show game interface
-        introVideo.onended = () => {
-            showGameInterface();
-            // No need to tryPlayMedia again here as it should be looping
-        };
-
-        // Close modal on outside click
-        window.addEventListener('click', (event) => {
-            if (event.target == userProfileModal) {
-                closeUserProfileModal();
-            }
-        });
-
-        // Toggle map icon on click
-        menuMap.addEventListener('click', () => {
-            const mapEmoji = menuMap.querySelector('.emoji-icon');
-            if (isMapIconCastle) {
-                mapEmoji.textContent = '🗺️';
-                menuMap.querySelector('span:last-child').textContent = 'World';
-            } else {
-                mapEmoji.textContent = '🏰';
-                menuMap.querySelector('span:last-child').textContent = 'Castle';
-            }
-            isMapIconCastle = !isMapIconCastle;
-        });
-
-    </script>
-</body>
-</html>
+            <div id="top-panel-row-1">
+                <div id="user-profile-section">
+                    <div id="user-avatar-container">
+                        <img id="user-avatar" src="https://via.placeholder.com/50/333/gold?text=A" alt="User Avatar">
+          
