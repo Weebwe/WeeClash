@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моя Гра</title>
+    <style>
+        /* Загальні стилі */
+        body {
+            margin: 0;
+            overflow: hidden; /* Ховаємо скролбари */
+            font-family: Arial, sans-serif;
+            color: gold; /* Основний колір тексту */
+            background-color: black;
+        }
+
+        /* Початковий екран */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('img/intro.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        #telegram-login-button {
+            padding: 15px 30px;
+            font-size: 24px;
+            background-color: #0088cc; /* Колір Telegram */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        #telegram-login-button:hover {
+            background-color: #006699;
+        }
+
+        /* Відео екран */
+        #video-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: none; /* Приховано за замовчуванням */
+            z-index: 90;
+        }
+
+        #intro-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Відео на весь екран */
+        }
+
+        /* Основний інтерфейс гри */
+        #game-interface {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none; /* Приховано за замовчуванням */
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #1a1a1a; /* Темний фон для гри */
+            z-index: 80;
+        }
+
+        /* Верхня панель */
+        #top-panel {
+            width: 100%;
+            height: 80px; /* Висота верхньої панелі */
+            background-color: rgba(0, 0, 0, 0.8); /* Напівпрозорий чорний */
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+            border-bottom: 2px solid gold; /* Золота рамка */
+            justify-content: space-between;
+        }
+
+        #user-info {
+            display: flex;
+            align-items: center;
+            color: gold;
+            font-size: 1.2em;
+        }
+
+        #user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #333; /* Заглушка для аватара */
+            margin-right: 10px;
+            border: 2px solid gold;
+            object-fit: cover;
+        }
+
+        #user-login {
+            font-weight: bold;
+        }
+
+        #top-right-menu {
+            display: flex;
+            gap: 15px;
+        }
+
+        .top-menu-item {
+            padding: 8px 12px;
+            background-color: #333;
+            border: 1px solid gold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .top-menu-item:hover {
+            background-color: #555;
+        }
+
+
+        /* Основний контент гри */
+        #main-content {
+            flex-grow: 1; /* Займає весь доступний простір */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            color: gold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Нижня панель меню (як Clash of Kings) */
+        #bottom-panel {
+            width: 100%;
+            height: 100px; /* Висота нижньої панелі */
+            background-color: rgba(0, 0, 0, 0.8); /* Напівпрозорий чорний */
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 10px;
+            box-sizing: border-box;
+            border-top: 2px solid gold; /* Золота рамка */
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: gold;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .menu-item img {
+            width: 60px; /* Розмір іконок */
+            height: 60px;
+            margin-bottom: 5px;
+            border: 1px solid rgba(255, 215, 0, 0.5); /* Золота рамка для іконок */
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen">
+        <script async src="https://telegram.org/js/telegram-widget.js?19"
+                data-telegram-login="YOUR_BOT_USERNAME"
+                data-size="large"
+                data-onauth="onTelegramAuth(user)"
+                data-request-access="write"></script>
+        <button id="telegram-login-button" style="display: none;">Увійти з Telegram</button>
+    </div>
+
+    <div id="video-screen">
+        <video id="intro-video" muted playsinline>
+            <source src="video/intro.mp4" type="video/mp4">
+            Ваш браузер не підтримує тег video.
+        </video>
+    </div>
+
+    <div id="game-interface">
+        <div id="top-panel">
+            <div id="user-info">
+                <img id="user-avatar" src="https://via.placeholder.com/50/333/gold?text=А" alt="Аватар">
+                <span id="user-login">Гість</span>
+            </div>
+            <div id="top-right-menu">
+                <div class="top-menu-item">Ресурси</div>
+                <div class="top-menu-item">Налаштування</div>
+            </div>
+        </div>
+
+        <div id="main-content">
+            Ласкаво просимо до вашої гри!
+        </div>
+
+        <div id="bottom-panel">
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/60/333/gold?text=База" alt="База">
+                <span>База</span>
+            </div>
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/60/333/gold?text=Карта" alt="Карта">
+                <span>Карта</span>
+            </div>
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/60/333/gold?text=Герої" alt="Герої">
+                <span>Герої</span>
+            </div>
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/60/333/gold?text=Альянс" alt="Альянс">
+                <span>Альянс</span>
+            </div>
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/60/333/gold?text=Пошта" alt="Пошта">
+                <span>Пошта</span>
+            </div>
+        </div>
+    </div>
+
+    <audio id="background-music" loop>
+        <source src="sound/bagrainbackground.mp3" type="audio/mpeg">
+        Ваш браузер не підтримує аудіо.
+    </audio>
+
+    <script>
+        const introScreen = document.getElementById('intro-screen');
+        const telegramLoginButton = document.getElementById('telegram-login-button');
+        const videoScreen = document.getElementById('video-screen');
+        const introVideo = document.getElementById('intro-video');
+        const gameInterface = document.getElementById('game-interface');
+        const backgroundMusic = document.getElementById('background-music');
+        const userAvatar = document.getElementById('user-avatar');
+        const userLogin = document.getElementById('user-login');
+
+        // Показуємо кнопку Telegram після завантаження віджета
+        // Віджет Telegram сам створить кнопку, тому ми приховаємо нашу кастомну
+        // Якщо ж віджет не завантажиться, можна показати кастомну кнопку
+        window.onload = () => {
+            const telegramWidget = document.querySelector('.telegram_login_button');
+            if (telegramWidget) {
+                telegramLoginButton.style.display = 'none'; // Ховаємо нашу кнопку, якщо віджет завантажився
+            } else {
+                telegramLoginButton.style.display = 'block'; // Показуємо нашу кнопку, якщо віджет не завантажився (на випадок помилки)
+                telegramLoginButton.onclick = () => {
+                    alert('Віджет Telegram не завантажився. Перевірте підключення або налаштування бота.');
+                };
+            }
+        };
+
+
+        // Функція, яка викликається після успішної авторизації через Telegram
+        function onTelegramAuth(user) {
+            console.log('Telegram User Info:', user);
+
+            // Оновлюємо інформацію про користувача
+            if (user.photo_url) {
+                userAvatar.src = user.photo_url;
+            }
+            userLogin.textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            if (user.username) {
+                userLogin.textContent += ` (@${user.username})`;
+            }
+
+            // Приховуємо початковий екран
+            introScreen.style.display = 'none';
+
+            // Показуємо екран з відео
+            videoScreen.style.display = 'block';
+
+            // Запускаємо фонову музику
+            backgroundMusic.play().catch(error => {
+                console.error('Помилка відтворення фонової музики:', error);
+                // Якщо не вдалося відтворити, можливо, користувач має взаємодіяти
+                // Можна додати кнопку "Відтворити музику"
+            });
+
+            // Запускаємо вступне відео
+            introVideo.play().catch(error => {
+                console.error('Помилка відтворення відео:', error);
+                // Якщо не вдалося відтворити, переходимо до гри одразу
+                showGameInterface();
+            });
+        }
+
+        // Обробник події закінчення відео
+        introVideo.onended = () => {
+            showGameInterface();
+        };
+
+        function showGameInterface() {
+            videoScreen.style.display = 'none'; // Приховуємо відео екран
+            gameInterface.style.display = 'flex'; // Показуємо інтерфейс гри
+            // Переконайтесь, що музика продовжує грати
+            backgroundMusic.play().catch(error => console.error('Помилка продовження музики:', error));
+        }
+
+        // Якщо Telegram віджет не підвантажився або ви хочете протестувати без нього
+        // Можна додати обробник для кастомної кнопки для тестування
+        // telegramLoginButton.addEventListener('click', () => {
+        //     // Симуляція авторизації для тестування
+        //     const testUser = {
+        //         first_name: 'Тестовий',
+        //         last_name: 'Користувач',
+        //         username: 'testuser',
+        //         photo_url: 'https://via.placeholder.com/50/gold/black?text=ТК'
+        //     };
+        //     onTelegramAuth(testUser);
+        // });
+
+    </script>
+</body>
+</html>
+
