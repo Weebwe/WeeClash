@@ -31,7 +31,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('img/intro.jpg');
+            background-image: url('img/intro.jpg'); /* Ensure this path is correct */
             background-size: cover;
             background-position: center;
             display: flex;
@@ -225,17 +225,20 @@
 
         #user-profile-section {
             display: flex;
-            align-items: center; /* Align avatar and VIP/login horizontally */
+            align-items: flex-start; /* Align avatar at the top */
             position: relative;
             cursor: pointer;
             flex-shrink: 0;
             gap: 5px; /* Space between avatar and text block */
+            flex-direction: column; /* Stack avatar, VIP, login vertically */
+            align-items: center; /* Center items within the section */
         }
 
         #user-avatar-container {
             position: relative;
             width: 50px;
             height: 50px;
+            margin-bottom: 5px; /* Space below avatar */
         }
 
         #user-avatar {
@@ -269,6 +272,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center; /* Center login text */
         }
 
         #user-login {
@@ -279,6 +283,7 @@
             text-overflow: ellipsis;
             max-width: 100px; /* Limit width to prevent overflow */
             color: white; /* Make login text white */
+            margin-top: 5px; /* Space between VIP and login */
         }
 
         #resources-container {
@@ -382,15 +387,20 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: gold;
+            color: gold; /* Gold text */
             font-size: 0.8em;
             cursor: pointer;
             user-select: none;
             flex-grow: 1;
             padding: 5px 0;
+            background-color: #0094FE; /* Blue background */
+            margin: 0 3px; /* Space between items */
+            border-radius: 8px; /* Slightly rounded corners */
+            border: 2px solid gold; /* Gold border */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Subtle shadow */
 
             animation: menu-item-pulse 2s infinite alternate;
-            transition: transform 0.4s ease-out, opacity 0.2s ease;
+            transition: transform 0.4s ease-out, opacity 0.2s ease, background-color 0.3s ease;
             transform-style: preserve-3d;
             perspective: 1000px;
             position: relative; /* For badge positioning */
@@ -421,13 +431,24 @@
         .menu-item:hover {
             transform: translateY(-5px) rotateY(15deg); /* Slight lift and flip on hover */
             opacity: 0.9;
+            background-color: #007bbd; /* Slightly darker blue on hover */
         }
         .menu-item:active {
             transform: translateY(-2px) rotateY(5deg); /* Slight press down and smaller flip on active */
             opacity: 0.7;
+            background-color: #005f99; /* Even darker blue on active */
         }
 
         /* Keyframes for menu item pulse animation */
+        @keyframes neon-glow {
+            from {
+                text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700, 0 0 15px rgba(255, 215, 0, 0.7);
+            }
+            to {
+                text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px rgba(255, 215, 0, 0.9);
+            }
+        }
+
         @keyframes menu-item-pulse {
             0% {
                 text-shadow: 0 0 3px gold;
@@ -532,6 +553,7 @@
             #user-login {
                 font-size: 0.8em;
                 max-width: 70px;
+                margin-top: 3px;
             }
             #resources-container {
                 gap: 5px; /* Adjust gap for smaller screens */
@@ -568,6 +590,8 @@
             }
             .menu-item {
                 font-size: 0.75em;
+                margin: 0 2px;
+                border-width: 1px;
             }
             .menu-item .emoji-icon {
                 font-size: 35px;
@@ -666,7 +690,7 @@
                     <div id="diamonds-display">
                         <span class="emoji">💎</span> <span id="resource-diamonds">0</span>
                     </div>
-                    </div>
+                </div>
             </div>
 
             <div id="top-panel-row-2">
@@ -679,15 +703,20 @@
         </div>
 
         <div id="bottom-panel">
-            <div class="menu-item" id="menu-daily">
-                <span class="menu-item-badge" id="badge-daily">0</span>
-                <span class="emoji-icon">📜</span>
-                <span>Daily</span>
+            <div class="menu-item" id="menu-map">
+                <span class="menu-item-badge" id="badge-map">0</span>
+                <span class="emoji-icon">🗺️</span>
+                <span>Map</span>
             </div>
-            <div class="menu-item" id="menu-items">
-                <span class="menu-item-badge" id="badge-items">0</span>
+            <div class="menu-item" id="menu-quests">
+                <span class="menu-item-badge" id="badge-quests">0</span>
+                <span class="emoji-icon">📜</span>
+                <span>Quests</span>
+            </div>
+            <div class="menu-item" id="menu-resources">
+                <span class="menu-item-badge" id="badge-resources">0</span>
                 <span class="emoji-icon">📦</span>
-                <span>Items</span>
+                <span>Resources</span>
             </div>
             <div class="menu-item" id="menu-mail">
                 <span class="menu-item-badge" id="badge-mail">0</span>
@@ -698,10 +727,6 @@
                 <span class="menu-item-badge" id="badge-alliance">0</span>
                 <span class="emoji-icon">🛡️</span>
                 <span>Alliance</span>
-            </div>
-            <div class="menu-item" id="menu-shield">
-                <span class="menu-item-badge" id="badge-shield">0</span>
-                <span class="emoji-icon">🛡️</span> <span>Shield</span>
             </div>
         </div>
     </div>
@@ -737,7 +762,7 @@
         const telegramLoginButtonFallback = document.getElementById('telegram-login-button-fallback');
         const errorMessage = document.getElementById('error-message');
         const errorOkButton = document.getElementById('error-ok-button');
-        const errorRetryButton = document.getElementById('error-retry-button'); // New retry button
+        const errorRetryButton = document.getElementById('error-retry-button');
         const copyrightFooter = document.getElementById('copyright-footer');
         const videoScreen = document.getElementById('video-screen');
         const introVideo = document.getElementById('intro-video');
@@ -771,11 +796,11 @@
         const modalId = document.getElementById('modal-id');
 
         const menuItemBadges = {
-            'daily': document.getElementById('badge-daily'),
-            'items': document.getElementById('badge-items'),
+            'map': document.getElementById('badge-map'),
+            'quests': document.getElementById('badge-quests'),
+            'resources': document.getElementById('badge-resources'),
             'mail': document.getElementById('badge-mail'),
-            'alliance': document.getElementById('badge-alliance'),
-            'shield': document.getElementById('badge-shield')
+            'alliance': document.getElementById('badge-alliance')
         };
 
         let audioVideoPlayed = false;
@@ -846,7 +871,6 @@
 
         function tryPlayMedia() {
             if (!audioVideoPlayed) {
-                // Attempt to play background music
                 backgroundMusic.play()
                     .then(() => {
                         console.log('Background music started successfully.');
@@ -856,7 +880,6 @@
                         console.error('Error playing background music:', error);
                     });
 
-                // Attempt to play intro video
                 introVideo.play()
                     .then(() => {
                         console.log('Intro video started successfully.');
@@ -864,7 +887,6 @@
                     })
                     .catch(error => {
                         console.error('Error playing intro video:', error);
-                        // If video fails to play (e.g., autoplay blocked), proceed to game interface
                         if (videoScreen.style.display === 'block') {
                             showGameInterface();
                         }
@@ -926,17 +948,16 @@
             const script = document.createElement('script');
             script.src = "https://telegram.org/js/telegram-widget.js?19";
             script.async = true;
-            script.setAttribute('data-telegram-login', 'Weegamemytestbot'); // !!! REPLACE WITH YOUR BOT USERNAME !!!
+            script.setAttribute('data-telegram-login', 'MyGameBot'); // !!! ЗМІНЕНО НА MyGameBot !!!
             script.setAttribute('data-size', 'large');
             script.setAttribute('data-onauth', 'onTelegramAuth(user)');
             script.setAttribute('data-request-access', 'write');
             script.onerror = () => {
                 console.error("Telegram widget script failed to load.");
-                showErrorMessage(true); // Show retry button if script itself fails
+                showErrorMessage(true);
             };
             telegramWidgetContainer.appendChild(script);
 
-            // Set a timeout to check if the widget button appeared
             setTimeout(() => {
                 const telegramWidgetButton = telegramWidgetContainer.querySelector('.telegram_login_button');
                 if (!telegramWidgetButton) {
@@ -947,7 +968,7 @@
                     telegramLoginButtonFallback.style.display = 'none';
                     hideErrorMessage();
                 }
-            }, 3000); // Wait 3 seconds to check widget presence
+            }, 3000);
         }
 
         // --- Event Listeners and Initial Setup ---
@@ -968,8 +989,7 @@
         errorRetryButton.addEventListener('click', () => {
             hideErrorMessage();
             playClickSound();
-            // Attempt to reload the widget or fallback to manual login
-            loadTelegramWidget(); // Try reloading the widget
+            loadTelegramWidget();
         });
 
 
@@ -984,11 +1004,12 @@
             updateVIPLevel(10);
 
             // Example badge updates
-            updateMenuItemBadge('daily', 5);
-            updateMenuItemBadge('items', 0);
+            updateMenuItemBadge('map', 0);
+            updateMenuItemBadge('quests', 5);
+            updateMenuItemBadge('resources', 0);
             updateMenuItemBadge('mail', 8);
             updateMenuItemBadge('alliance', 3);
-            updateMenuItemBadge('shield', 1);
+
 
             // Check if running inside Telegram WebApp
             if (window.Telegram && window.Telegram.WebApp) {
@@ -1011,7 +1032,7 @@
                     tryPlayMedia();
                 } else {
                     console.warn("Telegram WebApp user data not available. Showing fallback button.");
-                    showErrorMessage(true); // Show retry if WebApp data is missing
+                    showErrorMessage(true);
                     telegramLoginButtonFallback.onclick = () => {
                         playClickSound();
                         alert('Could not retrieve user data from Telegram WebApp. Please ensure you opened the game from a Telegram bot.');
@@ -1019,7 +1040,7 @@
                 }
             } else {
                 console.log("Not in Telegram WebApp. Displaying standard Telegram login widget.");
-                loadTelegramWidget(); // Load the Telegram widget dynamically
+                loadTelegramWidget();
                 telegramLoginButtonFallback.onclick = () => {
                     playClickSound();
                     alert('Please use the Telegram login button provided. Ensure the bot domain is configured correctly in BotFather if testing in a browser.');
