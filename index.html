@@ -51,15 +51,27 @@
             width: 100%; /* Ensure it takes full width for centering child elements */
         }
 
+        /* SEASON 1 on Intro Screen with Neon Style */
         #intro-season-text {
             position: absolute;
             top: 15%; /* Adjust as needed */
-            color: gold;
             font-size: 2.5em; /* Larger for intro screen */
             font-weight: bold;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.9);
             text-transform: uppercase;
             letter-spacing: 2px;
+            color: #FFD700; /* Gold color for neon */
+            text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700, 0 0 15px rgba(255, 215, 0, 0.7); /* Neon glow */
+            animation: neon-glow 1.5s ease-in-out infinite alternate; /* Neon glow animation */
+        }
+
+        /* Keyframes for neon glow (reused from top-season-text) */
+        @keyframes neon-glow {
+            from {
+                text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700, 0 0 15px rgba(255, 215, 0, 0.7);
+            }
+            to {
+                text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px rgba(255, 215, 0, 0.9);
+            }
         }
 
 
@@ -211,7 +223,7 @@
             box-sizing: border-box;
             border-bottom: 2px solid gold;
             justify-content: space-between;
-            position: relative; /* For absolute positioning of season text */
+            position: relative; /* For positioning elements */
         }
 
         #user-profile-section {
@@ -282,40 +294,7 @@
             font-size: 1.1em;
         }
 
-        #top-right-section {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
-            position: relative; /* To contain top-season-text */
-            height: 100%; /* Occupy full height for positioning */
-        }
-
-        /* "SEASON 1" neon style */
-        #top-season-text {
-            position: absolute;
-            top: 50%; /* Center vertically */
-            right: 10px;
-            transform: translateY(-50%); /* Adjust for perfect vertical centering */
-            font-size: 0.7em; /* Small font */
-            color: #FFD700; /* Gold color for neon */
-            text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700, 0 0 15px rgba(255, 215, 0, 0.7); /* Neon glow */
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            white-space: nowrap;
-            /* Animation for subtle glow effect */
-            animation: neon-glow 1.5s ease-in-out infinite alternate;
-        }
-
-        @keyframes neon-glow {
-            from {
-                text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700, 0 0 15px rgba(255, 215, 0, 0.7);
-            }
-            to {
-                text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px rgba(255, 215, 0, 0.9);
-            }
-        }
+        /* Removed #top-right-section and #top-season-text from here */
 
 
         /* Main Game Content */
@@ -352,20 +331,25 @@
             color: gold;
             font-size: 0.8em;
             cursor: pointer;
-            transition: transform 0.2s ease, opacity 0.2s ease; /* Added opacity for animation */
             user-select: none;
             flex-grow: 1;
             padding: 5px 0;
+
+            /* Animations */
             animation: menu-item-pulse 2s infinite alternate; /* Pulse animation */
+            transition: transform 0.4s ease-out, opacity 0.2s ease; /* Transition for flip and opacity */
+            transform-style: preserve-3d; /* For 3D transform (flip) */
+            perspective: 1000px; /* For 3D transform (flip) */
+            position: relative; /* For flip content */
         }
 
         /* Hover/Active states for menu items */
         .menu-item:hover {
-            transform: translateY(-5px) scale(1.05); /* Slight lift and scale on hover */
+            transform: translateY(-5px) rotateY(15deg); /* Slight lift and flip on hover */
             opacity: 0.9;
         }
         .menu-item:active {
-            transform: translateY(-2px) scale(0.95); /* Slight press down on active */
+            transform: translateY(-2px) rotateY(5deg); /* Slight press down and smaller flip on active */
             opacity: 0.7;
         }
 
@@ -485,12 +469,7 @@
             .resource-item .emoji {
                 font-size: 1.0em;
             }
-            #top-season-text {
-                font-size: 0.6em;
-                top: 50%;
-                right: 5px;
-                transform: translateY(-50%);
-            }
+            /* #top-season-text is removed, so no need for media query for it */
             #bottom-panel {
                 height: 80px;
             }
@@ -588,10 +567,7 @@
                     <span class="emoji">💰</span> Gold: <span id="resource-gold">500</span>
                 </div>
             </div>
-            <div id="top-right-section">
-                <span id="top-season-text">SEASON 1</span>
             </div>
-        </div>
 
         <div id="main-content">
             Welcome to your game!
@@ -665,8 +641,8 @@
         const userProfileSection = document.getElementById('user-profile-section');
         const userAvatar = document.getElementById('user-avatar');
         const userLogin = document.getElementById('user-login');
-        const topSeasonText = document.getElementById('top-season-text');
-        const introSeasonText = document.getElementById('intro-season-text'); // Get the intro season text
+        // const topSeasonText = document.getElementById('top-season-text'); // Removed from game interface
+        const introSeasonText = document.getElementById('intro-season-text');
 
         const menuMap = document.getElementById('menu-map');
         const bottomMenuItems = document.querySelectorAll('#bottom-panel .menu-item');
@@ -721,6 +697,7 @@
                 } else {
                     modalUserAvatar.src = 'https://via.placeholder.com/100/333/gold?text=A';
                 }
+                // Only show first_name and last_name as "Login" in modal
                 modalUserLogin.textContent = userData.first_name + (userData.last_name ? ' ' + userData.last_name : '');
                 modalFirstName.textContent = userData.first_name || 'N/A';
                 modalLastName.textContent = userData.last_name || 'N/A';
@@ -819,10 +796,8 @@
                 userAvatar.src = 'https://via.placeholder.com/50/333/gold?text=A';
             }
 
+            // Only show first_name and last_name for login display under avatar
             userLogin.textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-            if (user.username) {
-                userLogin.textContent += ` (@${user.username})`;
-            }
 
             userProfileSection.userData = user;
         }
@@ -905,10 +880,10 @@
             const mapEmoji = menuMap.querySelector('.emoji-icon');
             if (isMapIconCastle) {
                 mapEmoji.textContent = '🗺️';
-                menuMap.querySelector('span:last-child').textContent = 'World'; // Changed to "World"
+                menuMap.querySelector('span:last-child').textContent = 'World';
             } else {
                 mapEmoji.textContent = '🏰';
-                menuMap.querySelector('span:last-child').textContent = 'Castle'; // Changed to "Castle"
+                menuMap.querySelector('span:last-child').textContent = 'Castle';
             }
             isMapIconCastle = !isMapIconCastle;
         });
