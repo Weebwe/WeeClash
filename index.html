@@ -51,20 +51,22 @@
             width: 100%; /* Ensure it takes full width for centering child elements */
         }
 
-        /* SEASON 1 on Intro Screen with Neon Style */
+        /* SEASON 1 on Intro Screen with Neon Style - positioned top-right */
         #intro-season-text {
             position: absolute;
-            top: 15%; /* Adjust as needed */
-            font-size: 2.5em; /* Larger for intro screen */
+            top: 10px; /* From top */
+            right: 10px; /* From right */
+            font-size: 1.0em; /* Smaller font for top-right */
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: #FFD700; /* Gold color for neon */
             text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700, 0 0 15px rgba(255, 215, 0, 0.7); /* Neon glow */
             animation: neon-glow 1.5s ease-in-out infinite alternate; /* Neon glow animation */
+            white-space: nowrap; /* Prevent wrapping */
         }
 
-        /* Keyframes for neon glow (reused from top-season-text) */
+        /* Keyframes for neon glow */
         @keyframes neon-glow {
             from {
                 text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700, 0 0 15px rgba(255, 215, 0, 0.7);
@@ -82,7 +84,7 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 105;
-            display: flex; /* Changed to flex to stack elements, not just one */
+            display: flex;
             flex-direction: column; /* Stack buttons vertically */
             gap: 10px; /* Space between buttons */
             padding: 10px;
@@ -121,9 +123,6 @@
         #telegram-login-button-fallback:hover {
             background-color: #006699;
         }
-
-        /* Removed Google Login Button CSS */
-
 
         /* Error message for Telegram widget */
         #error-message {
@@ -199,15 +198,15 @@
         /* Top Panel */
         #top-panel {
             width: 100%;
-            height: 80px;
+            height: auto; /* Adjusted to auto to fit content */
             background-color: rgba(0, 0, 0, 0.8);
             display: flex;
-            align-items: center;
-            padding: 0 10px;
+            flex-direction: column; /* Stack sections vertically */
+            align-items: center; /* Center content horizontally */
+            padding: 5px 10px; /* Added vertical padding */
             box-sizing: border-box;
             border-bottom: 2px solid gold;
-            justify-content: space-between;
-            position: relative; /* For positioning elements */
+            position: relative;
         }
 
         #user-profile-section {
@@ -217,17 +216,23 @@
             position: relative;
             cursor: pointer;
             flex-shrink: 0;
-            padding-right: 5px;
+            padding: 5px 0; /* Some padding around avatar/login */
+        }
+
+        /* VIP Level positioned between resources and total score */
+        #vip-level-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 5px 0; /* Space above/below VIP */
         }
 
         #vip-level {
-            position: absolute;
-            top: -10px;
             background-color: red;
             color: white;
-            font-size: 0.7em;
-            padding: 2px 5px;
-            border-radius: 3px;
+            font-size: 0.9em; /* Slightly larger */
+            padding: 3px 8px;
+            border-radius: 5px;
             font-weight: bold;
             z-index: 5;
             white-space: nowrap;
@@ -240,22 +245,26 @@
             background-color: #333;
             border: 2px solid gold;
             object-fit: cover;
+            margin-bottom: 3px; /* Smaller margin below avatar */
         }
 
         #user-login {
             font-weight: bold;
             font-size: 0.9em;
-            margin-top: 5px;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; /* Add ellipsis if text is too long */
+            max-width: 100px; /* Limit width to prevent overflow */
         }
 
         #resources-section {
             display: flex;
-            flex-grow: 1;
-            gap: 5px;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
+            flex-wrap: nowrap; /* Keep resources in one line */
+            justify-content: center; /* Center resources */
+            gap: 8px; /* Space between resource items */
+            width: 100%; /* Take full width for centering */
+            overflow-x: auto; /* Allow horizontal scrolling if too many resources */
+            padding-bottom: 5px; /* Space before VIP */
         }
 
         .resource-item {
@@ -268,6 +277,7 @@
             border: 1px solid rgba(255, 215, 0, 0.5);
             font-size: 0.8em;
             white-space: nowrap;
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         .resource-item span {
@@ -278,7 +288,19 @@
             font-size: 1.1em;
         }
 
-        /* Removed #top-right-section and #top-season-text from here */
+        #total-score-section {
+            width: 100%;
+            text-align: center;
+            font-size: 1.1em;
+            color: white;
+            margin-top: 5px; /* Space below VIP */
+            padding-bottom: 5px;
+        }
+        #total-score-section span {
+             color: gold;
+             font-weight: bold;
+             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
 
 
         /* Main Game Content */
@@ -425,14 +447,14 @@
         /* Responsive adjustments */
         @media (max-width: 600px) {
             #top-panel {
-                height: 70px;
-                padding: 0 5px;
+                padding: 5px; /* Adjust padding for smaller screens */
             }
             #user-profile-section {
-                padding-right: 0px;
+                padding: 3px 0;
             }
             #vip-level {
-                font-size: 0.6em;
+                font-size: 0.8em; /* Smaller VIP font on mobile */
+                padding: 2px 6px;
             }
             #user-avatar {
                 width: 40px;
@@ -440,11 +462,12 @@
             }
             #user-login {
                 font-size: 0.8em;
+                max-width: 80px; /* Reduce max-width for login */
             }
             #resources-section {
-                gap: 3px;
-                flex-wrap: wrap;
-                justify-content: flex-start;
+                gap: 5px; /* Adjust gap for smaller screens */
+                padding-bottom: 3px;
+                font-size: 0.75em;
             }
             .resource-item {
                 font-size: 0.7em;
@@ -453,7 +476,11 @@
             .resource-item .emoji {
                 font-size: 1.0em;
             }
-            /* #top-season-text is removed, so no need for media query for it */
+            #total-score-section {
+                font-size: 1.0em;
+                margin-top: 3px;
+                padding-bottom: 3px;
+            }
             #bottom-panel {
                 height: 80px;
             }
@@ -478,7 +505,9 @@
                 padding: 12px 25px;
             }
             #intro-season-text {
-                font-size: 2em; /* Adjust for smaller screens */
+                font-size: 0.8em; /* Smaller on mobile intro screen */
+                top: 5px;
+                right: 5px;
             }
         }
 
@@ -521,10 +550,10 @@
     <div id="game-interface">
         <div id="top-panel">
             <div id="user-profile-section">
-                <span id="vip-level">VIP 5</span>
                 <img id="user-avatar" src="https://via.placeholder.com/50/333/gold?text=A" alt="User Avatar">
                 <span id="user-login">Guest</span>
             </div>
+
             <div id="resources-section">
                 <div class="resource-item">
                     <span class="emoji">🍎</span> Food: <span id="resource-food">10000</span>
@@ -541,6 +570,14 @@
                 <div class="resource-item">
                     <span class="emoji">💰</span> Gold: <span id="resource-gold">500</span>
                 </div>
+            </div>
+
+            <div id="vip-level-container">
+                <span id="vip-level">VIP 5</span>
+            </div>
+
+            <div id="total-score-section">
+                Total Score: <span id="total-score">0</span>
             </div>
         </div>
 
@@ -614,6 +651,15 @@
         const userAvatar = document.getElementById('user-avatar');
         const userLogin = document.getElementById('user-login');
         const introSeasonText = document.getElementById('intro-season-text');
+        const vipLevelSpan = document.getElementById('vip-level'); // VIP level span
+        const totalScoreSpan = document.getElementById('total-score'); // Total score span
+
+        const resourceFood = document.getElementById('resource-food');
+        const resourceWood = document.getElementById('resource-wood');
+        const resourceStone = document.getElementById('resource-stone');
+        const resourceMetal = document.getElementById('resource-metal');
+        const resourceGold = document.getElementById('resource-gold');
+
 
         const menuMap = document.getElementById('menu-map');
         const bottomMenuItems = document.querySelectorAll('#bottom-panel .menu-item');
@@ -629,6 +675,14 @@
 
         let isMapIconCastle = false;
         let audioVideoPlayed = false;
+
+        // --- Utility Functions ---
+        function formatNumber(num) {
+            if (num >= 1000000000) return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+            if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+            return num;
+        }
 
         // --- Sound Functions ---
         function playClickSound() {
@@ -667,7 +721,6 @@
                 } else {
                     modalUserAvatar.src = 'https://via.placeholder.com/100/333/gold?text=A';
                 }
-                // Only show first_name and last_name as "Login" in modal
                 modalUserLogin.textContent = userData.first_name + (userData.last_name ? ' ' + userData.last_name : '');
                 modalFirstName.textContent = userData.first_name || 'N/A';
                 modalLastName.textContent = userData.last_name || 'N/A';
@@ -689,9 +742,6 @@
                     .then(() => {
                         console.log('Background music started successfully.');
                         audioVideoPlayed = true;
-                        // Remove listeners after first successful play of any media
-                        document.removeEventListener('click', tryPlayMedia);
-                        document.removeEventListener('touchstart', tryPlayMedia);
                     })
                     .catch(error => {
                         console.error('Error playing background music:', error);
@@ -702,9 +752,6 @@
                     .then(() => {
                         console.log('Intro video started successfully.');
                         audioVideoPlayed = true;
-                        // Remove listeners after first successful play of any media
-                        document.removeEventListener('click', tryPlayMedia);
-                        document.removeEventListener('touchstart', tryPlayMedia);
                     })
                     .catch(error => {
                         console.error('Error playing intro video:', error);
@@ -716,6 +763,33 @@
             }
         }
 
+        // --- Update Game Data Functions ---
+        function updateUserProfile(user) {
+            if (user.photo_url) {
+                userAvatar.src = user.photo_url;
+            } else {
+                userAvatar.src = `https://via.placeholder.com/50/333/gold?text=${user.first_name.charAt(0).toUpperCase()}`;
+            }
+            userLogin.textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            userProfileSection.userData = user;
+        }
+
+        function updateResources(food, wood, stone, metal, gold) {
+            resourceFood.textContent = formatNumber(food);
+            resourceWood.textContent = formatNumber(wood);
+            resourceStone.textContent = formatNumber(stone);
+            resourceMetal.textContent = formatNumber(metal);
+            resourceGold.textContent = formatNumber(gold);
+        }
+
+        function updateTotalScore(score) {
+            totalScoreSpan.textContent = formatNumber(score);
+        }
+
+        function updateVIPLevel(level) {
+            vipLevelSpan.textContent = `VIP ${level}`;
+        }
+
         // --- Authentication Callbacks (from external scripts) ---
 
         // Telegram Auth Callback - this function is called by the Telegram widget
@@ -723,31 +797,13 @@
             console.log('Telegram User Info (from widget):', user);
             updateUserProfile(user);
             showVideoScreen();
-            tryPlayMedia();
+            tryPlayMedia(); // Play media after user is authorized
         }
-
-        // --- Helper Function to Update User Profile ---
-        function updateUserProfile(user) {
-            if (user.photo_url) {
-                userAvatar.src = user.photo_url;
-            } else if (user.email) { // Fallback for Google if no photo_url, but Google login removed
-                 userAvatar.src = `https://via.placeholder.com/50/gold/black?text=${user.first_name.charAt(0).toUpperCase()}`;
-            } else {
-                userAvatar.src = 'https://via.placeholder.com/50/333/gold?text=A';
-            }
-
-            // Only show first_name and last_name for login display under avatar
-            userLogin.textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-
-            userProfileSection.userData = user;
-        }
-
 
         // --- Event Listeners and Initial Setup ---
 
-        // Add event listeners for the first user interaction to play audio and video
-        document.addEventListener('click', tryPlayMedia);
-        document.addEventListener('touchstart', tryPlayMedia);
+        // No global click/touchstart listener for media playback anymore,
+        // as it should start only after successful login.
 
         // Add click sound to relevant buttons/elements
         userProfileSection.addEventListener('click', () => {
@@ -767,6 +823,11 @@
         });
 
         window.onload = function () {
+            // Initial resource and score update (example values)
+            updateResources(10000, 5000, 3000, 1000, 500);
+            updateTotalScore(1234567);
+            updateVIPLevel(5); // Set initial VIP level
+
             // Check if running inside Telegram WebApp
             if (window.Telegram && window.Telegram.WebApp) {
                 console.log("Telegram WebApp detected. Attempting auto-login...");
@@ -787,7 +848,7 @@
                     };
                     updateUserProfile(user);
                     showVideoScreen();
-                    tryPlayMedia();
+                    tryPlayMedia(); // Play media after user is authorized
                 } else {
                     console.warn("Telegram WebApp user data not available. Showing fallback button.");
                     showErrorMessage(); // Show error if WebApp data is missing (unlikely but good for robustness)
@@ -822,7 +883,7 @@
         // When intro video ends, show game interface
         introVideo.onended = () => {
             showGameInterface();
-            tryPlayMedia(); // Ensure background music continues playing if it started
+            // No need to tryPlayMedia again here as it should be looping
         };
 
         // Close modal on outside click
