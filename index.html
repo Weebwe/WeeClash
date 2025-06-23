@@ -607,19 +607,15 @@
         <div id="intro-screen-content">
             <span id="intro-season-text">SEASON 1</span>
             <div id="error-message">
-                <p>Telegram widget failed to load.</p>
-                <p>Please check your internet connection and bot domain settings in BotFather.</p>
-                <button id="error-ok-button" onclick="hideErrorMessage()">OK</button>
+                <p>Telegram widget failed to load or bot domain not configured correctly.</p>
+                <p>Please check your internet connection and verify the domain in BotFather settings (e.g., `weebwe.github.io`).</p>
+                <button id="error-ok-button">OK</button>
+                <button id="error-retry-button" style="margin-left: 10px; display: none;">Try Again</button>
             </div>
             <div id="login-buttons-container">
                 <div id="telegram-widget-container">
-                    <script async src="https://telegram.org/js/telegram-widget.js?19"
-                            data-telegram-login="Weegamemytestbot"
-                            data-size="large"
-                            data-onauth="onTelegramAuth(user)"
-                            data-request-access="write"></script>
-                    <button id="telegram-login-button-fallback">Log in with Telegram</button>
-                </div>
+                    </div>
+                <button id="telegram-login-button-fallback">Log in with Telegram</button>
             </div>
         </div>
     </div>
@@ -641,4 +637,407 @@
                 <div id="user-profile-section">
                     <div id="user-avatar-container">
                         <img id="user-avatar" src="https://via.placeholder.com/50/333/gold?text=A" alt="User Avatar">
-          
+                        <span id="vip-level">VIP 5</span>
+                    </div>
+                    <div id="user-info-text">
+                        <span id="user-login">Guest</span>
+                    </div>
+                </div>
+
+                <div id="resources-container">
+                    <div class="resource-item">
+                        <span class="emoji">🍎</span> Food: <span id="resource-food">0</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="emoji">🌳</span> Wood: <span id="resource-wood">0</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="emoji">🪨</span> Stone: <span id="resource-stone">0</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="emoji">⚙️</span> Metal: <span id="resource-metal">0</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="emoji">💰</span> Gold: <span id="resource-gold">0</span>
+                    </div>
+                </div>
+
+                <div id="right-top-panel-items">
+                    <div id="diamonds-display">
+                        <span class="emoji">💎</span> <span id="resource-diamonds">0</span>
+                    </div>
+                    </div>
+            </div>
+
+            <div id="top-panel-row-2">
+                <span id="player-power">0</span>
+            </div>
+        </div>
+
+        <div id="main-content">
+            Welcome to your game!
+        </div>
+
+        <div id="bottom-panel">
+            <div class="menu-item" id="menu-daily">
+                <span class="menu-item-badge" id="badge-daily">0</span>
+                <span class="emoji-icon">📜</span>
+                <span>Daily</span>
+            </div>
+            <div class="menu-item" id="menu-items">
+                <span class="menu-item-badge" id="badge-items">0</span>
+                <span class="emoji-icon">📦</span>
+                <span>Items</span>
+            </div>
+            <div class="menu-item" id="menu-mail">
+                <span class="menu-item-badge" id="badge-mail">0</span>
+                <span class="emoji-icon">✉️</span>
+                <span>Mail</span>
+            </div>
+            <div class="menu-item" id="menu-alliance">
+                <span class="menu-item-badge" id="badge-alliance">0</span>
+                <span class="emoji-icon">🛡️</span>
+                <span>Alliance</span>
+            </div>
+            <div class="menu-item" id="menu-shield">
+                <span class="menu-item-badge" id="badge-shield">0</span>
+                <span class="emoji-icon">🛡️</span> <span>Shield</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="user-profile-modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>User Profile</h2>
+            <img id="modal-user-avatar" class="modal-avatar" src="https://via.placeholder.com/100/333/gold?text=A" alt="User Avatar">
+            <div class="modal-user-info">
+                <p>Login: <strong id="modal-user-login">N/A</strong></p>
+                <p>First Name: <strong id="modal-first-name">N/A</strong></p>
+                <p>Last Name: <strong id="modal-last-name">N/A</strong></p>
+                <p>Username: <strong id="modal-username">N/A</strong></p>
+                <p>ID: <strong id="modal-id">N/A</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <audio id="background-music" loop>
+        <source src="saund/background.mp3" type="audio/mpeg">
+        Your browser does not support audio.
+    </audio>
+
+    <audio id="click-sound">
+        <source src="saund/click.mp3" type="audio/mpeg">
+        Your browser does not support audio.
+    </audio>
+
+    <script>
+        const introScreen = document.getElementById('intro-screen');
+        const telegramWidgetContainer = document.getElementById('telegram-widget-container');
+        const telegramLoginButtonFallback = document.getElementById('telegram-login-button-fallback');
+        const errorMessage = document.getElementById('error-message');
+        const errorOkButton = document.getElementById('error-ok-button');
+        const errorRetryButton = document.getElementById('error-retry-button'); // New retry button
+        const copyrightFooter = document.getElementById('copyright-footer');
+        const videoScreen = document.getElementById('video-screen');
+        const introVideo = document.getElementById('intro-video');
+        const gameInterface = document.getElementById('game-interface');
+        const backgroundMusic = document.getElementById('background-music');
+        const clickSound = document.getElementById('click-sound');
+
+        const userProfileSection = document.getElementById('user-profile-section');
+        const userAvatar = document.getElementById('user-avatar');
+        const vipLevelSpan = document.getElementById('vip-level');
+        const userLogin = document.getElementById('user-login');
+
+        const resourceFood = document.getElementById('resource-food');
+        const resourceWood = document.getElementById('resource-wood');
+        const resourceStone = document.getElementById('resource-stone');
+        const resourceMetal = document.getElementById('resource-metal');
+        const resourceGold = document.getElementById('resource-gold');
+        const resourceDiamonds = document.getElementById('resource-diamonds');
+
+        const playerPowerSpan = document.getElementById('player-power');
+
+        const bottomMenuItems = document.querySelectorAll('#bottom-panel .menu-item');
+
+        const userProfileModal = document.getElementById('user-profile-modal');
+        const closeButton = userProfileModal.querySelector('.close-button');
+        const modalUserAvatar = document.getElementById('modal-user-avatar');
+        const modalUserLogin = document.getElementById('modal-user-login');
+        const modalFirstName = document.getElementById('modal-first-name');
+        const modalLastName = document.getElementById('modal-last-name');
+        const modalUsername = document.getElementById('modal-username');
+        const modalId = document.getElementById('modal-id');
+
+        const menuItemBadges = {
+            'daily': document.getElementById('badge-daily'),
+            'items': document.getElementById('badge-items'),
+            'mail': document.getElementById('badge-mail'),
+            'alliance': document.getElementById('badge-alliance'),
+            'shield': document.getElementById('badge-shield')
+        };
+
+        let audioVideoPlayed = false;
+
+        // --- Utility Functions ---
+        function formatLargeNumber(num) {
+            if (num === null || num === undefined) return '0';
+            num = Number(num);
+            if (isNaN(num)) return '0';
+
+            if (num >= 1000000000) return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+            if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+            return num.toString();
+        }
+
+        // --- Sound Functions ---
+        function playClickSound() {
+            if (clickSound) {
+                clickSound.currentTime = 0;
+                clickSound.play().catch(e => console.log("Click sound play blocked:", e));
+            }
+        }
+
+        // --- UI Functions ---
+        function showErrorMessage(showRetry = false) {
+            errorMessage.style.display = 'block';
+            telegramLoginButtonFallback.style.display = 'block';
+            telegramWidgetContainer.style.display = 'none';
+            errorRetryButton.style.display = showRetry ? 'inline-block' : 'none';
+        }
+
+        function hideErrorMessage() {
+            errorMessage.style.display = 'none';
+        }
+
+        function showVideoScreen() {
+            introScreen.style.display = 'none';
+            copyrightFooter.style.display = 'none';
+            videoScreen.style.display = 'block';
+        }
+
+        function showGameInterface() {
+            videoScreen.style.display = 'none';
+            gameInterface.style.display = 'flex';
+        }
+
+        function openUserProfileModal(userData) {
+            if (userData) {
+                if (userData.photo_url) {
+                    modalUserAvatar.src = userData.photo_url;
+                } else {
+                    modalUserAvatar.src = `https://via.placeholder.com/100/333/gold?text=${userData.first_name.charAt(0).toUpperCase()}`;
+                }
+                modalUserLogin.textContent = userData.first_name + (userData.last_name ? ' ' + userData.last_name : '');
+                modalFirstName.textContent = userData.first_name || 'N/A';
+                modalLastName.textContent = userData.last_name || 'N/A';
+                modalUsername.textContent = userData.username ? `@${userData.username}` : 'N/A';
+                modalId.textContent = userData.id || 'N/A';
+            }
+            userProfileModal.style.display = 'flex';
+        }
+
+        function closeUserProfileModal() {
+            userProfileModal.style.display = 'none';
+            playClickSound();
+        }
+
+        function tryPlayMedia() {
+            if (!audioVideoPlayed) {
+                // Attempt to play background music
+                backgroundMusic.play()
+                    .then(() => {
+                        console.log('Background music started successfully.');
+                        audioVideoPlayed = true;
+                    })
+                    .catch(error => {
+                        console.error('Error playing background music:', error);
+                    });
+
+                // Attempt to play intro video
+                introVideo.play()
+                    .then(() => {
+                        console.log('Intro video started successfully.');
+                        audioVideoPlayed = true;
+                    })
+                    .catch(error => {
+                        console.error('Error playing intro video:', error);
+                        // If video fails to play (e.g., autoplay blocked), proceed to game interface
+                        if (videoScreen.style.display === 'block') {
+                            showGameInterface();
+                        }
+                    });
+            }
+        }
+
+        // --- Update Game Data Functions ---
+        function updateUserProfile(user) {
+            if (user.photo_url) {
+                userAvatar.src = user.photo_url;
+            } else {
+                userAvatar.src = `https://via.placeholder.com/50/333/gold?text=${user.first_name.charAt(0).toUpperCase()}`;
+            }
+            userLogin.textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            userProfileSection.userData = user;
+        }
+
+        function updateResources(food, wood, stone, metal, gold, diamonds) {
+            resourceFood.textContent = formatLargeNumber(food);
+            resourceWood.textContent = formatLargeNumber(wood);
+            resourceStone.textContent = formatLargeNumber(stone);
+            resourceMetal.textContent = formatLargeNumber(metal);
+            resourceGold.textContent = formatLargeNumber(gold);
+            resourceDiamonds.textContent = formatLargeNumber(diamonds);
+        }
+
+        function updatePlayerPower(power) {
+            playerPowerSpan.textContent = formatLargeNumber(power);
+        }
+
+        function updateVIPLevel(level) {
+            vipLevelSpan.textContent = `VIP ${level}`;
+        }
+
+        function updateMenuItemBadge(itemName, count) {
+            const badge = menuItemBadges[itemName];
+            if (badge) {
+                if (count > 0) {
+                    badge.textContent = count;
+                    badge.style.display = 'block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+
+        // --- Telegram Auth Callback ---
+        function onTelegramAuth(user) {
+            console.log('Telegram User Info (from widget):', user);
+            updateUserProfile(user);
+            showVideoScreen();
+            tryPlayMedia();
+        }
+
+        // --- Init Telegram Widget ---
+        function loadTelegramWidget() {
+            telegramWidgetContainer.innerHTML = ''; // Clear previous widget
+            const script = document.createElement('script');
+            script.src = "https://telegram.org/js/telegram-widget.js?19";
+            script.async = true;
+            script.setAttribute('data-telegram-login', 'Weegamemytestbot'); // !!! REPLACE WITH YOUR BOT USERNAME !!!
+            script.setAttribute('data-size', 'large');
+            script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+            script.setAttribute('data-request-access', 'write');
+            script.onerror = () => {
+                console.error("Telegram widget script failed to load.");
+                showErrorMessage(true); // Show retry button if script itself fails
+            };
+            telegramWidgetContainer.appendChild(script);
+
+            // Set a timeout to check if the widget button appeared
+            setTimeout(() => {
+                const telegramWidgetButton = telegramWidgetContainer.querySelector('.telegram_login_button');
+                if (!telegramWidgetButton) {
+                    console.warn("Telegram widget button not found after timeout. Showing fallback.");
+                    showErrorMessage(true);
+                } else {
+                    console.log("Telegram widget button loaded successfully.");
+                    telegramLoginButtonFallback.style.display = 'none';
+                    hideErrorMessage();
+                }
+            }, 3000); // Wait 3 seconds to check widget presence
+        }
+
+        // --- Event Listeners and Initial Setup ---
+        userProfileSection.addEventListener('click', () => {
+            playClickSound();
+            if (userProfileSection.userData) {
+                openUserProfileModal(userProfileSection.userData);
+            } else {
+                alert('User data not available. Please log in first.');
+            }
+        });
+
+        errorOkButton.addEventListener('click', () => {
+            hideErrorMessage();
+            playClickSound();
+        });
+
+        errorRetryButton.addEventListener('click', () => {
+            hideErrorMessage();
+            playClickSound();
+            // Attempt to reload the widget or fallback to manual login
+            loadTelegramWidget(); // Try reloading the widget
+        });
+
+
+        bottomMenuItems.forEach(item => {
+            item.addEventListener('click', playClickSound);
+        });
+
+        window.onload = function () {
+            // Initial game data updates with example values
+            updateResources(765700000, 874800000, 284300000, 160200000, 500, 30585);
+            updatePlayerPower(23572131);
+            updateVIPLevel(10);
+
+            // Example badge updates
+            updateMenuItemBadge('daily', 5);
+            updateMenuItemBadge('items', 0);
+            updateMenuItemBadge('mail', 8);
+            updateMenuItemBadge('alliance', 3);
+            updateMenuItemBadge('shield', 1);
+
+            // Check if running inside Telegram WebApp
+            if (window.Telegram && window.Telegram.WebApp) {
+                console.log("Telegram WebApp detected. Attempting auto-login...");
+                telegramWidgetContainer.style.display = 'none';
+                telegramLoginButtonFallback.style.display = 'none';
+
+                const webAppUser = window.Telegram.WebApp.initDataUnsafe.user;
+                if (webAppUser) {
+                    console.log("WebApp User Info:", webAppUser);
+                    const user = {
+                        id: webAppUser.id,
+                        first_name: webAppUser.first_name,
+                        last_name: webAppUser.last_name || '',
+                        username: webAppUser.username || '',
+                        photo_url: webAppUser.photo_url || ''
+                    };
+                    updateUserProfile(user);
+                    showVideoScreen();
+                    tryPlayMedia();
+                } else {
+                    console.warn("Telegram WebApp user data not available. Showing fallback button.");
+                    showErrorMessage(true); // Show retry if WebApp data is missing
+                    telegramLoginButtonFallback.onclick = () => {
+                        playClickSound();
+                        alert('Could not retrieve user data from Telegram WebApp. Please ensure you opened the game from a Telegram bot.');
+                    };
+                }
+            } else {
+                console.log("Not in Telegram WebApp. Displaying standard Telegram login widget.");
+                loadTelegramWidget(); // Load the Telegram widget dynamically
+                telegramLoginButtonFallback.onclick = () => {
+                    playClickSound();
+                    alert('Please use the Telegram login button provided. Ensure the bot domain is configured correctly in BotFather if testing in a browser.');
+                };
+            }
+        };
+
+        // When intro video ends, show game interface
+        introVideo.onended = () => {
+            showGameInterface();
+        };
+
+        // Close modal on outside click
+        window.addEventListener('click', (event) => {
+            if (event.target == userProfileModal) {
+                closeUserProfileModal();
+            }
+        });
+    </script>
+</body>
+</html>
