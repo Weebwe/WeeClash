@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Моя Гра</title>
+    <title>Wee Clash</title>
     <style>
         /* Загальні стилі */
         body {
@@ -12,6 +12,16 @@
             font-family: Arial, sans-serif;
             color: gold; /* Основний колір тексту */
             background-color: black;
+            display: flex; /* Для центрування контенту */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Висота на весь екран */
+            position: relative; /* Для позиціонування копірайту */
+        }
+
+        /* Приховуємо все, поки не завантажиться JS або не визначиться початковий стан */
+        body > *:not(#intro-screen):not(#copyright-footer) {
+            display: none;
         }
 
         /* Початковий екран */
@@ -31,7 +41,8 @@
             z-index: 100;
         }
 
-        #telegram-login-button {
+        /* Стилі для кастомної кнопки (якщо віджет не завантажиться) */
+        #telegram-login-button-fallback {
             padding: 15px 30px;
             font-size: 24px;
             background-color: #0088cc; /* Колір Telegram */
@@ -41,11 +52,53 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            margin-top: 20px; /* Відступ від віджета */
+            display: none; /* Приховано за замовчуванням */
         }
 
-        #telegram-login-button:hover {
+        #telegram-login-button-fallback:hover {
             background-color: #006699;
         }
+
+        /* Стилі для повідомлення про помилку */
+        #error-message {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            display: none; /* Приховано за замовчуванням */
+            max-width: 80%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            border: 2px solid gold;
+        }
+
+        #error-message button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: gold;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        /* Копірайт знизу */
+        #copyright-footer {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            color: gold;
+            font-size: 0.9em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            z-index: 101; /* Поверх всього */
+            opacity: 0.8;
+        }
+
 
         /* Відео екран */
         #video-screen {
@@ -113,9 +166,17 @@
             font-weight: bold;
         }
 
-        #top-right-menu {
+        #top-right-section {
             display: flex;
+            align-items: center;
             gap: 15px;
+        }
+
+        #season-text {
+            color: gold;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
         }
 
         .top-menu-item {
@@ -176,18 +237,24 @@
             margin-bottom: 5px;
             border: 1px solid rgba(255, 215, 0, 0.5); /* Золота рамка для іконок */
             border-radius: 5px;
+            object-fit: cover;
         }
     </style>
 </head>
 <body>
 
     <div id="intro-screen">
+        <div id="error-message">
+            <p>Віджет Telegram не завантажився.</p>
+            <p>Будь ласка, перевірте підключення до Інтернету та налаштування домену бота в BotFather.</p>
+            <button onclick="hideErrorMessage()">Гаразд</button>
+        </div>
         <script async src="https://telegram.org/js/telegram-widget.js?19"
-                data-telegram-login="YOUR_BOT_USERNAME"
+                data-telegram-login="Weegamemytestbot"
                 data-size="large"
                 data-onauth="onTelegramAuth(user)"
                 data-request-access="write"></script>
-        <button id="telegram-login-button" style="display: none;">Увійти з Telegram</button>
+        <button id="telegram-login-button-fallback">Увійти з Telegram</button>
     </div>
 
     <div id="video-screen">
@@ -200,10 +267,11 @@
     <div id="game-interface">
         <div id="top-panel">
             <div id="user-info">
-                <img id="user-avatar" src="https://via.placeholder.com/50/333/gold?text=А" alt="Аватар">
+                <img id="user-avatar" src="https://via.placeholder.com/50/333/gold?text=А" alt="Аватар користувача">
                 <span id="user-login">Гість</span>
             </div>
-            <div id="top-right-menu">
+            <div id="top-right-section">
+                <span id="season-text">SEASON 1</span>
                 <div class="top-menu-item">Ресурси</div>
                 <div class="top-menu-item">Налаштування</div>
             </div>
@@ -215,36 +283,41 @@
 
         <div id="bottom-panel">
             <div class="menu-item">
-                <img src="https://via.placeholder.com/60/333/gold?text=База" alt="База">
+                <img src="https://via.placeholder.com/60/333/gold?text=База" alt="Іконка Бази">
                 <span>База</span>
             </div>
             <div class="menu-item">
-                <img src="https://via.placeholder.com/60/333/gold?text=Карта" alt="Карта">
+                <img src="https://via.placeholder.com/60/333/gold?text=Карта" alt="Іконка Карти">
                 <span>Карта</span>
             </div>
             <div class="menu-item">
-                <img src="https://via.placeholder.com/60/333/gold?text=Герої" alt="Герої">
+                <img src="https://via.placeholder.com/60/333/gold?text=Герої" alt="Іконка Героїв">
                 <span>Герої</span>
             </div>
             <div class="menu-item">
-                <img src="https://via.placeholder.com/60/333/gold?text=Альянс" alt="Альянс">
+                <img src="https://via.placeholder.com/60/333/gold?text=Альянс" alt="Іконка Альянсу">
                 <span>Альянс</span>
             </div>
             <div class="menu-item">
-                <img src="https://via.placeholder.com/60/333/gold?text=Пошта" alt="Пошта">
+                <img src="https://via.placeholder.com/60/333/gold?text=Пошта" alt="Іконка Пошти">
                 <span>Пошта</span>
             </div>
         </div>
     </div>
 
+    <div id="copyright-footer">
+        © 2024 WEEBWE LLC. All rights reserved.
+    </div>
+
     <audio id="background-music" loop>
-        <source src="sound/bagrainbackground.mp3" type="audio/mpeg">
+        <source src="sound/Background.mp3" type="audio/mpeg">
         Ваш браузер не підтримує аудіо.
     </audio>
 
     <script>
         const introScreen = document.getElementById('intro-screen');
-        const telegramLoginButton = document.getElementById('telegram-login-button');
+        const telegramLoginButtonFallback = document.getElementById('telegram-login-button-fallback');
+        const errorMessage = document.getElementById('error-message');
         const videoScreen = document.getElementById('video-screen');
         const introVideo = document.getElementById('intro-video');
         const gameInterface = document.getElementById('game-interface');
@@ -252,23 +325,37 @@
         const userAvatar = document.getElementById('user-avatar');
         const userLogin = document.getElementById('user-login');
 
-        // Показуємо кнопку Telegram після завантаження віджета
-        // Віджет Telegram сам створить кнопку, тому ми приховаємо нашу кастомну
-        // Якщо ж віджет не завантажиться, можна показати кастомну кнопку
-        window.onload = () => {
-            const telegramWidget = document.querySelector('.telegram_login_button');
-            if (telegramWidget) {
-                telegramLoginButton.style.display = 'none'; // Ховаємо нашу кнопку, якщо віджет завантажився
-            } else {
-                telegramLoginButton.style.display = 'block'; // Показуємо нашу кнопку, якщо віджет не завантажився (на випадок помилки)
-                telegramLoginButton.onclick = () => {
-                    alert('Віджет Telegram не завантажився. Перевірте підключення або налаштування бота.');
+        // Функція для показу повідомлення про помилку
+        function showErrorMessage() {
+            errorMessage.style.display = 'block';
+            telegramLoginButtonFallback.style.display = 'block'; // Показуємо кастомну кнопку, якщо віджет не працює
+        }
+
+        // Функція для приховування повідомлення про помилку
+        function hideErrorMessage() {
+            errorMessage.style.display = 'none';
+        }
+
+        // Перевірка завантаження віджета Telegram через певний час
+        // Дає віджету шанс завантажитися і створити свою кнопку
+        setTimeout(() => {
+            const telegramWidget = document.querySelector('.telegram_login_button'); // Віджет Telegram створює елемент з цим класом
+            if (!telegramWidget) {
+                // Якщо віджет не знайдено (не завантажився)
+                showErrorMessage();
+                // Додаємо обробник для нашої запасної кнопки
+                telegramLoginButtonFallback.onclick = () => {
+                    alert('Віджет Telegram не завантажився. Будь ласка, перевірте підключення до Інтернету та налаштування домену бота в BotFather. Якщо ви тестуєте локально, це може не працювати.');
+                    // Якщо ви тестуєте локально і віджет не працює, можете розкоментувати наступний рядок для симуляції авторизації:
+                    // onTelegramAuth({ id: 12345, first_name: 'Тестовий', last_name: 'Юзер', username: 'testuser', photo_url: 'https://via.placeholder.com/50/gold/black?text=Т' });
                 };
+            } else {
+                // Якщо віджет завантажився успішно, ховаємо нашу запасну кнопку
+                telegramLoginButtonFallback.style.display = 'none';
             }
-        };
+        }, 3000); // Чекаємо 3 секунди
 
-
-        // Функція, яка викликається після успішної авторизації через Telegram
+        // Функція, яка викликається віджетом Telegram після успішної авторизації
         function onTelegramAuth(user) {
             console.log('Telegram User Info:', user);
 
@@ -290,14 +377,14 @@
             // Запускаємо фонову музику
             backgroundMusic.play().catch(error => {
                 console.error('Помилка відтворення фонової музики:', error);
-                // Якщо не вдалося відтворити, можливо, користувач має взаємодіяти
-                // Можна додати кнопку "Відтворити музику"
+                // Попереджаємо користувача, якщо музика не може відтворитись автоматично
+                alert('Музика не відтворилася автоматично. Будь ласка, взаємодійте зі сторінкою, щоб вона запрацювала.');
             });
 
             // Запускаємо вступне відео
             introVideo.play().catch(error => {
                 console.error('Помилка відтворення відео:', error);
-                // Якщо не вдалося відтворити, переходимо до гри одразу
+                // Якщо не вдалося відтворити відео, переходимо до гри одразу
                 showGameInterface();
             });
         }
@@ -314,20 +401,6 @@
             backgroundMusic.play().catch(error => console.error('Помилка продовження музики:', error));
         }
 
-        // Якщо Telegram віджет не підвантажився або ви хочете протестувати без нього
-        // Можна додати обробник для кастомної кнопки для тестування
-        // telegramLoginButton.addEventListener('click', () => {
-        //     // Симуляція авторизації для тестування
-        //     const testUser = {
-        //         first_name: 'Тестовий',
-        //         last_name: 'Користувач',
-        //         username: 'testuser',
-        //         photo_url: 'https://via.placeholder.com/50/gold/black?text=ТК'
-        //     };
-        //     onTelegramAuth(testUser);
-        // });
-
     </script>
 </body>
 </html>
-
