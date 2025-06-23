@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wee Clash</title>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            overflow: hidden; /* Hide scrollbars */
+            font-family: Arial, sans-serif;
+            color: gold; /* Main text color */
+            background-color: black;
+            display: flex; /* For centering content */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Full viewport height */
+            position: relative; /* For copyright positioning */
+        }
+
+        /* Hide all content initially except for intro-screen and copyright-footer */
+        body > *:not(#intro-screen):not(#copyright-footer) {
+            display: none;
+        }
+
+        /* Intro Screen */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('img/intro.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center; /* Center content vertically too */
+            align-items: center;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        #intro-screen-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            height: 100%;
+            width: 100%; /* Ensure it takes full width for centering child elements */
+        }
+
+        /* Removed intro-season-text from here, it's now only in game-interface */
+
+        /* Telegram Login Widget Container */
+        #telegram-widget-container {
+            position: absolute;
+            bottom: 60px; /* Adjust to be above copyright */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 105;
+            padding: 10px; /* Optional padding around the widget */
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for readability */
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            box-sizing: border-box;
+        }
+        #telegram-widget-container .telegram_login_button {
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Fallback button for Telegram login */
+        #telegram-login-button-fallback {
+            padding: 15px 30px;
+            font-size: 24px;
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            display: none;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        #telegram-login-button-fallback:hover {
+            background-color: #006699;
+        }
+
+        /* Error message for Telegram widget */
+        #error-message {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            display: none;
+            max-width: 80%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            border: 2px solid gold;
+        }
+
+        #error-message button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: gold;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        /* Copyright footer */
+        #copyright-footer {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            color: gold;
+            font-size: 0.9em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            z-index: 101;
+            opacity: 0.8;
+        }
+
+        /* Video Screen */
+        #video-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: none;
+            z-index: 90;
+        }
+
+        #intro-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Main Game Interface */
+        #game-interface {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #1a1a1a;
+            z-index: 80;
+        }
+
+        /* Top Panel */
+        #top-panel {
+            width: 100%;
+            height: 80px;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            box-sizing: border-box;
+            border-bottom: 2px solid gold;
+            justify-content: space-between;
+            position: relative; /* For absolute positioning of season text */
+        }
+
+        #user-profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+            padding-right: 5px;
+        }
+
+        #vip-level {
+            position: absolute;
+            top: -10px;
+            background-color: red;
+            color: white;
+            font-size: 0.7em;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+            z-index: 5;
+            white-space: nowrap;
+        }
+
+        #user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #333;
+            border: 2px solid gold;
+            object-fit: cover;
+        }
+
+        #user-login {
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-top: 5px;
+            white-space: nowrap;
+        }
+
+        #resources-section {
+            display: flex;
+            flex-grow: 1;
+            gap: 5px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            background-color: rgba(51, 51, 51, 0.7);
+            padding: 3px 6px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            font-size: 0.8em;
+            white-space: nowrap;
+        }
+
+        .resource-item span {
+            color: white;
+        }
+
+        .resource-item .emoji {
+            font-size: 1.1em;
+        }
+
+        #top-right-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            position: relative; /* To contain top-season-text */
+            height: 100%; /* Occupy full height for positioning */
+        }
+
+        /* "1 Сезон" неоновий стиль */
+        #top-season-text {
+            position: absolute;
+            top: 50%; /* Center vertically */
+            right: 10px;
+            transform: translateY(-50%); /* Adjust for perfect vertical centering */
+            font-size: 0.7em; /* Small font */
+            color: #FFD700; /* Золотий колір для неону */
+            text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700, 0 0 15px rgba(255, 215, 0, 0.7); /* Neon glow */
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            /* Animation for subtle glow effect */
+            animation: neon-glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes neon-glow {
+            from {
+                text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700, 0 0 15px rgba(255, 215, 0, 0.7);
+            }
+            to {
+                text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px rgba(255, 215, 0, 0.9);
+            }
+        }
+
+
+        /* Main Game Content */
+        #main-content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            color: gold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Bottom Menu Panel */
+        #bottom-panel {
+            width: 100%;
+            height: 90px;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 5px;
+            box-sizing: border-box;
+            border-top: 2px solid gold;
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: gold;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            user-select: none;
+            flex-grow: 1;
+            padding: 5px 0;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .menu-item .emoji-icon {
+            font-size: 40px;
+            margin-bottom: 3px;
+            line-height: 1;
+        }
+
+        /* Modal Window */
+        #user-profile-modal {
+            display: none;
+            position: fixed;
+            z-index: 200;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border: 2px solid gold;
+            border-radius: 10px;
+            width: 95%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
+            position: relative;
+            color: gold;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .close-button {
+            color: gold;
+            position: absolute;
+            top: 5px;
+            right: 15px;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #ccc;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid gold;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .modal-user-info p {
+            margin: 3px 0;
+            font-size: 1.0em;
+        }
+
+        .modal-user-info strong {
+            color: white;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            #top-panel {
+                height: 70px;
+                padding: 0 5px;
+            }
+            #user-profile-section {
+                padding-right: 0px;
+            }
+            #vip-level {
+                font-size: 0.6em;
+            }
+            #user-avatar {
+                width: 40px;
+                height: 40px;
+            }
+            #user-login {
+                font-size: 0.8em;
+            }
+            #resources-section {
+                gap: 3px;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+            }
+            .resource-item {
+                font-size: 0.7em;
+                padding: 2px 4px;
+            }
+            .resource-item .emoji {
+                font-size: 1.0em;
+            }
+            #top-season-text {
+                font-size: 0.6em;
+                top: 50%; /* Center vertically again for mobile */
+                right: 5px;
+                transform: translateY(-50%);
+            }
+            #bottom-panel {
+                height: 80px;
+            }
+            .menu-item {
+                font-size: 0.75em;
+            }
+            .menu-item .emoji-icon {
+                font-size: 35px;
+            }
+            #main-content {
+                font-size: 1.2em;
+            }
+            .modal-content {
+                padding: 15px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen">
+        <div id="intro-screen-content">
+            <div id="error-message">
+                <p>Telegram widget failed to load.</p>
+                <p>Please check your internet connection and bot domain settings in BotFather.</p>
+                <button onclick="hideErrorMessage()">OK</button>
+            </div>
+            <div id="telegram-widget-container">
+                <script async src="https://telegram.org/js/telegram-widget.js?19"
+                        data-telegram-login="Weegamemytestbot"
+                        data-size="large"
+                        data-onauth="onTelegramAuth(user)"
+                        data-request-access="write"></script>
+                <button id="telegram-login-button-fallback">Log in with Telegram</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="copyright-footer">
+        © 2024 WEEBWE LLC. All rights reserved.
+    </div>
+
+    <div id="video-screen">
+        <video id="intro-video" playsinline>
+            <source src="video/intro.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div id="game-interface">
+        <div id="top-panel">
+            <div id="user-profile-section">
+                <span id="vip-level">VIP 5</span>
+                <img id="user-avatar" src="https://via.placeholder.com/50/333/gold?text=A" alt="User Avatar">
+                <span id="user-login">Guest</span>
+            </div>
+            <div id="resources-section">
+                <div class="resource-item">
+                    <span class="emoji">🍎</span> Food: <span id="resource-food">10000</span>
+                </div>
+                <div class="resource-item">
+                    <span class="emoji">🌳</span> Wood: <span id="resource-wood">5000</span>
+                </div>
+                <div class="resource-item">
+                    <span class="emoji">🪨</span> Stone: <span id="resource-stone">3000</span>
+                </div>
+                <div class="resource-item">
+                    <span class="emoji">⚙️</span> Metal: <span id="resource-metal">1000</span>
+                </div>
+                <div class="resource-item">
+                    <span class="emoji">💰</span> Gold: <span id="resource-gold">500</span>
+                </div>
+            </div>
+            <div id="top-right-section">
+                <span id="top-season-text">1 Сезон</span>
+            </div>
+        </div>
+
+        <div id="main-content">
+            Welcome to your game!
+        </div>
+
+        <div id="bottom-panel">
+            <div class="menu-item" id="menu-map">
+                <span class="emoji-icon">🗺️</span>
+                <span>World Map</span>
+            </div>
+            <div class="menu-item">
+                <span class="emoji-icon">📜</span>
+                <span>Quests</span>
+            </div>
+            <div class="menu-item">
+                <span class="emoji-icon">📦</span>
+                <span>Resources</span>
+            </div>
+            <div class="menu-item">
+                <span class="emoji-icon">✉️</span>
+                <span>Mail</span>
+            </div>
+            <div class="menu-item">
+                <span class="emoji-icon">🛡️</span>
+                <span>Alliance</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="user-profile-modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>User Profile</h2>
+            <img id="modal-user-avatar" class="modal-avatar" src="https://via.placeholder.com/100/333/gold?text=A" alt="User Avatar">
+            <div class="modal-user-info">
+                <p>Login: <strong id="modal-user-login">N/A</strong></p>
+                <p>First Name: <strong id="modal-first-name">N/A</strong></p>
+                <p>Last Name: <strong id="modal-last-name">N/A</strong></p>
+                <p>Username: <strong id="modal-username">N/A</strong></p>
+                <p>ID: <strong id="modal-id">N/A</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <audio id="background-music" loop>
+        <source src="sound/background.mp3" type="audio/mpeg">
+        Your browser does not support audio.
+    </audio>
+
+    <script>
+        const introScreen = document.getElementById('intro-screen');
+        const telegramWidgetContainer = document.getElementById('telegram-widget-container');
+        const telegramLoginButtonFallback = document.getElementById('telegram-login-button-fallback');
+        const errorMessage = document.getElementById('error-message');
+        const copyrightFooter = document.getElementById('copyright-footer');
+        const videoScreen = document.getElementById('video-screen');
+        const introVideo = document.getElementById('intro-video');
+        const gameInterface = document.getElementById('game-interface');
+        const backgroundMusic = document.getElementById('background-music');
+
+        const userProfileSection = document.getElementById('user-profile-section');
+        const userAvatar = document.getElementById('user-avatar');
+        const userLogin = document.getElementById('user-login');
+        const topSeasonText = document.getElementById('top-season-text'); // Now this is in game-interface
+
+        const menuMap = document.getElementById('menu-map');
+
+        const userProfileModal = document.getElementById('user-profile-modal');
+        const closeButton = userProfileModal.querySelector('.close-button');
+        const modalUserAvatar = document.getElementById('modal-user-avatar');
+        const modalUserLogin = document.getElementById('modal-user-login');
+        const modalFirstName = document.getElementById('modal-first-name');
+        const modalLastName = document.getElementById('modal-last-name');
+        const modalUsername = document.getElementById('modal-username');
+        const modalId = document.getElementById('modal-id');
+
+        let isMapIconCastle = false;
+        let audioVideoPlayed = false;
+
+        function showErrorMessage() {
+            errorMessage.style.display = 'block';
+            telegramLoginButtonFallback.style.display = 'block';
+            telegramWidgetContainer.style.display = 'none';
+        }
+
+        function hideErrorMessage() {
+            errorMessage.style.display = 'none';
+        }
+
+        function showVideoScreen() {
+            introScreen.style.display = 'none';
+            copyrightFooter.style.display = 'none';
+            videoScreen.style.display = 'block';
+        }
+
+        function showGameInterface() {
+            videoScreen.style.display = 'none';
+            gameInterface.style.display = 'flex';
+        }
+
+        function openUserProfileModal(userData) {
+            if (userData) {
+                if (userData.photo_url) {
+                    modalUserAvatar.src = userData.photo_url;
+                } else {
+                    modalUserAvatar.src = 'https://via.placeholder.com/100/333/gold?text=A';
+                }
+                modalUserLogin.textContent = userData.first_name + (userData.last_name ? ' ' + userData.last_name : '');
+                modalFirstName.textContent = userData.first_name || 'N/A';
+                modalLastName.textContent = userData.last_name || 'N/A';
+                modalUsername.textContent = userData.username ? `@${userData.username}` : 'N/A';
+                modalId.textContent = userData.id || 'N/A';
+            }
+            userProfileModal.style.display = 'flex';
+        }
+
+        function closeUserProfileModal() {
+            userProfileModal.style.display = 'none';
+        }
+
+        function tryPlayMedia() {
+            if (!audioVideoPlayed) {
+                // Attempt to play background music
+                backgroundMusic.play()
+                    .then(() => {
+                        console.log('Background music started successfully.');
+                        audioVideoPlayed = true;
+                        // Remove listeners after first successful play of any media
+                        document.removeEventListener('click', tryPlayMedia);
+                        document.removeEventListener('touchstart', tryPlayMedia);
+                    })
+                    .catch(error => {
+                        console.error('Error playing background music:', error);
+                        // Music might still be blocked by browser policies until a more direct user interaction
+                    });
+
+                // Attempt to play intro video
+                introVideo.play()
+                    .then(() => {
+                        console.log('Intro video started successfully.');
+                        audioVideoPlayed = true;
+                        // Remove listeners after first successful play of any media
+                        document.removeEventListener('click', tryPlayMedia);
+                        document.removeEventListener('touchstart', tryPlayMedia);
+                    })
+                    .catch(error => {
+                        console.error('Error playing intro video:', error);
+                        // If video fails to play (e.g., autoplay blocked), proceed to game interface
+                        if (videoScreen.style.display === 'block') {
+                            showGameInterface();
+                        }
+                    });
+            }
+        }
+
+        // --- Event Listeners and Initial Setup ---
+
+        // Add event listeners for the first user interaction to play audio and video
+        document.addEventListener('click', tryPlayMedia);
+        document.addEventListener('touchstart', tryPlayMedia);
+
+        setTimeout(() => {
+            const telegramWidget = document.querySelector('.telegram_login_button');
+            if (!telegramWidget) {
+                showErrorMessage();
+                telegramLoginButtonFallback.onclick = () => {
+                    alert('Telegram widget failed to load. Please check your internet connection and bot domain settings in BotFather. If you are testing locally, this might not work.');
+                };
+            } else {
+                telegramLoginButtonFallback.style.display = 'none';
+                if (window.Telegram && window.Telegram.WebApp) {
+                    console.log("Telegram WebApp detected. Attempting auto-login...");
+                    // In WebApp context, the widget should be hidden as auth is implicit
+                    telegramWidgetContainer.style.display = 'none';
+                }
+            }
+        }, 3000);
+
+        function onTelegramAuth(user) {
+            console.log('Telegram User Info:', user);
+
+            if (user.photo_url) {
+                userAvatar.src = user.photo_url;
+            }
+            userLogin.textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            if (user.username) {
+                userLogin.textContent += ` (@${user.username})`;
+            }
+
+            userProfileSection.userData = user;
+
+            showVideoScreen();
+            tryPlayMedia(); // Attempt to play media after auth
+
+            // If the video screen is shown, play video and transition to game
+            // Otherwise (e.g., if video autoplay was blocked), directly show game interface
+            introVideo.onended = () => {
+                showGameInterface();
+                tryPlayMedia(); // Ensure music continues if video ended
+            };
+        }
+
+        userProfileSection.addEventListener('click', () => {
+            if (userProfileSection.userData) {
+                openUserProfileModal(userProfileSection.userData);
+            } else {
+                alert('User data not available. Please log in first.');
+            }
+        });
+
+        closeButton.addEventListener('click', closeUserProfileModal);
+
+        window.addEventListener('click', (event) => {
+            if (event.target == userProfileModal) {
+                closeUserProfileModal();
+            }
+        });
+
+        menuMap.addEventListener('click', () => {
+            const mapEmoji = menuMap.querySelector('.emoji-icon');
+            if (isMapIconCastle) {
+                mapEmoji.textContent = '🗺️';
+                menuMap.querySelector('span:last-child').textContent = 'World Map';
+            } else {
+                mapEmoji.textContent = '🏰';
+                menuMap.querySelector('span:last-child').textContent = 'Castle';
+            }
+            isMapIconCastle = !isMapIconCastle;
+        });
+
+    </script>
+</body>
+</html>
