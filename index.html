@@ -440,15 +440,6 @@
         }
 
         /* Keyframes for menu item pulse animation */
-        @keyframes neon-glow {
-            from {
-                text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700, 0 0 15px rgba(255, 215, 0, 0.7);
-            }
-            to {
-                text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px rgba(255, 215, 0, 0.9);
-            }
-        }
-
         @keyframes menu-item-pulse {
             0% {
                 text-shadow: 0 0 3px gold;
@@ -888,6 +879,7 @@
                     .catch(error => {
                         console.error('Error playing intro video:', error);
                         if (videoScreen.style.display === 'block') {
+                            // Fallback if video can't play (e.g., no user interaction)
                             showGameInterface();
                         }
                     });
@@ -948,7 +940,7 @@
             const script = document.createElement('script');
             script.src = "https://telegram.org/js/telegram-widget.js?19";
             script.async = true;
-            script.setAttribute('data-telegram-login', 'MyGameBot'); // !!! ЗМІНЕНО НА MyGameBot !!!
+            script.setAttribute('data-telegram-login', 'Weegamemytestbot'); // <<< ЗМІНЕНО ЗГІДНО З ВАШИМ ОСТАННІМ ПОВІДОМЛЕННЯМ!
             script.setAttribute('data-size', 'large');
             script.setAttribute('data-onauth', 'onTelegramAuth(user)');
             script.setAttribute('data-request-access', 'write');
@@ -958,6 +950,7 @@
             };
             telegramWidgetContainer.appendChild(script);
 
+            // Timeout to check if widget button was rendered
             setTimeout(() => {
                 const telegramWidgetButton = telegramWidgetContainer.querySelector('.telegram_login_button');
                 if (!telegramWidgetButton) {
@@ -968,7 +961,7 @@
                     telegramLoginButtonFallback.style.display = 'none';
                     hideErrorMessage();
                 }
-            }, 3000);
+            }, 3000); // Give it 3 seconds to render
         }
 
         // --- Event Listeners and Initial Setup ---
@@ -989,8 +982,10 @@
         errorRetryButton.addEventListener('click', () => {
             hideErrorMessage();
             playClickSound();
-            loadTelegramWidget();
+            loadTelegramWidget(); // Try loading the widget again
         });
+
+        closeButton.addEventListener('click', closeUserProfileModal);
 
 
         bottomMenuItems.forEach(item => {
@@ -1004,7 +999,7 @@
             updateVIPLevel(10);
 
             // Example badge updates
-            updateMenuItemBadge('map', 0);
+            updateMenuItemBadge('map', 0); // Assuming no badge for Map by default
             updateMenuItemBadge('quests', 5);
             updateMenuItemBadge('resources', 0);
             updateMenuItemBadge('mail', 8);
