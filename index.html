@@ -1,30 +1,30 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wee Clash</title>
     <style>
-        /* Загальні стилі */
+        /* General Styles */
         body {
             margin: 0;
-            overflow: hidden; /* Ховаємо скролбари */
+            overflow: hidden; /* Hide scrollbars */
             font-family: Arial, sans-serif;
-            color: gold; /* Основний колір тексту */
+            color: gold; /* Main text color */
             background-color: black;
-            display: flex; /* Для центрування контенту */
+            display: flex; /* For centering content */
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Висота на весь екран */
-            position: relative; /* Для позиціонування копірайту */
+            min-height: 100vh; /* Full viewport height */
+            position: relative; /* For copyright positioning */
         }
 
-        /* Приховуємо все, поки не завантажиться JS або не визначиться початковий стан */
+        /* Hide all content initially except for intro-screen and copyright-footer */
         body > *:not(#intro-screen):not(#copyright-footer) {
             display: none;
         }
 
-        /* Початковий екран */
+        /* Intro Screen */
         #intro-screen {
             position: fixed;
             top: 0;
@@ -35,32 +35,45 @@
             background-size: cover;
             background-position: center;
             display: flex;
-            justify-content: center;
+            justify-content: flex-end; /* Align to bottom for button */
             align-items: center;
             flex-direction: column;
             z-index: 100;
         }
 
-        /* Стилі для кастомної кнопки (якщо віджет не завантажиться) */
+        /* Telegram Login Widget Container - position at the very bottom */
+        #telegram-widget-container {
+            position: absolute;
+            bottom: 60px; /* Adjust to be above copyright */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 105;
+            padding: 10px; /* Optional padding */
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for readability */
+            border-radius: 8px;
+        }
+
+
+        /* Fallback button for Telegram login (if widget fails) */
         #telegram-login-button-fallback {
             padding: 15px 30px;
             font-size: 24px;
-            background-color: #0088cc; /* Колір Telegram */
+            background-color: #0088cc; /* Telegram color */
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            margin-top: 20px; /* Відступ від віджета */
-            display: none; /* Приховано за замовчуванням */
+            margin-top: 20px; /* Spacing from widget */
+            display: none; /* Hidden by default */
         }
 
         #telegram-login-button-fallback:hover {
             background-color: #006699;
         }
 
-        /* Стилі для повідомлення про помилку */
+        /* Error message for Telegram widget */
         #error-message {
             background-color: rgba(0, 0, 0, 0.8);
             color: white;
@@ -69,7 +82,7 @@
             text-align: center;
             margin-bottom: 20px;
             font-size: 1.1em;
-            display: none; /* Приховано за замовчуванням */
+            display: none; /* Hidden by default */
             max-width: 80%;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
             border: 2px solid gold;
@@ -86,7 +99,7 @@
             font-size: 1em;
         }
 
-        /* Копірайт знизу */
+        /* Copyright footer - only on intro screen */
         #copyright-footer {
             position: fixed;
             bottom: 10px;
@@ -95,12 +108,12 @@
             color: gold;
             font-size: 0.9em;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-            z-index: 101; /* Поверх всього */
+            z-index: 101; /* Above all but intro screen elements */
             opacity: 0.8;
         }
 
 
-        /* Відео екран */
+        /* Video Screen */
         #video-screen {
             position: fixed;
             top: 0;
@@ -108,62 +121,103 @@
             width: 100%;
             height: 100%;
             background-color: black;
-            display: none; /* Приховано за замовчуванням */
+            display: none; /* Hidden by default */
             z-index: 90;
         }
 
         #intro-video {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Відео на весь екран */
+            object-fit: cover; /* Video fullscreen */
         }
 
-        /* Основний інтерфейс гри */
+        /* Main Game Interface */
         #game-interface {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            display: none; /* Приховано за замовчуванням */
+            display: none; /* Hidden by default */
             flex-direction: column;
             justify-content: space-between;
-            background-color: #1a1a1a; /* Темний фон для гри */
+            background-color: #1a1a1a; /* Dark background for game */
             z-index: 80;
         }
 
-        /* Верхня панель */
+        /* Top Panel */
         #top-panel {
             width: 100%;
-            height: 80px; /* Висота верхньої панелі */
-            background-color: rgba(0, 0, 0, 0.8); /* Напівпрозорий чорний */
+            height: 80px; /* Height of top panel */
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black */
             display: flex;
             align-items: center;
             padding: 0 20px;
             box-sizing: border-box;
-            border-bottom: 2px solid gold; /* Золота рамка */
+            border-bottom: 2px solid gold; /* Gold border */
             justify-content: space-between;
         }
 
-        #user-info {
+        #user-profile-section {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            color: gold;
-            font-size: 1.2em;
+            position: relative;
+            cursor: pointer;
+        }
+
+        #vip-level {
+            position: absolute;
+            top: -10px; /* Adjust as needed */
+            background-color: red;
+            color: white;
+            font-size: 0.7em;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+            z-index: 5;
+            white-space: nowrap; /* Prevent wrapping */
         }
 
         #user-avatar {
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: #333; /* Заглушка для аватара */
-            margin-right: 10px;
+            background-color: #333; /* Placeholder for avatar */
             border: 2px solid gold;
             object-fit: cover;
         }
 
         #user-login {
             font-weight: bold;
+            font-size: 0.9em;
+            margin-top: 5px;
+            white-space: nowrap; /* Prevent wrapping */
+        }
+
+        #resources-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background-color: rgba(51, 51, 51, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            font-size: 0.9em;
+        }
+
+        .resource-item span {
+            color: white; /* Resource values are white */
+        }
+
+        .resource-item .emoji {
+            font-size: 1.2em; /* Size of resource emojis */
         }
 
         #top-right-section {
@@ -193,9 +247,9 @@
         }
 
 
-        /* Основний контент гри */
+        /* Main Game Content */
         #main-content {
-            flex-grow: 1; /* Займає весь доступний простір */
+            flex-grow: 1; /* Takes all available space */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -204,17 +258,17 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
         }
 
-        /* Нижня панель меню (як Clash of Kings) */
+        /* Bottom Menu Panel (Clash of Kings style) */
         #bottom-panel {
             width: 100%;
-            height: 100px; /* Висота нижньої панелі */
-            background-color: rgba(0, 0, 0, 0.8); /* Напівпрозорий чорний */
+            height: 100px; /* Height of bottom panel */
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black */
             display: flex;
             justify-content: space-around;
             align-items: center;
             padding: 0 10px;
             box-sizing: border-box;
-            border-top: 2px solid gold; /* Золота рамка */
+            border-top: 2px solid gold; /* Gold border */
         }
 
         .menu-item {
@@ -225,19 +279,81 @@
             font-size: 0.9em;
             cursor: pointer;
             transition: transform 0.2s ease;
+            user-select: none; /* Prevent text selection on click */
         }
 
         .menu-item:hover {
             transform: translateY(-5px);
         }
 
-        .menu-item img {
-            width: 60px; /* Розмір іконок */
-            height: 60px;
+        .menu-item .emoji-icon {
+            font-size: 48px; /* Size of emoji icons */
             margin-bottom: 5px;
-            border: 1px solid rgba(255, 215, 0, 0.5); /* Золота рамка для іконок */
-            border-radius: 5px;
+            line-height: 1; /* Remove extra space around emoji */
+        }
+
+        /* Modal Window */
+        #user-profile-modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 200; /* Above everything else */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            margin: auto;
+            padding: 30px;
+            border: 2px solid gold;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
+            position: relative;
+            color: gold;
+            text-align: center;
+        }
+
+        .close-button {
+            color: gold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #ccc;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid gold;
             object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        .modal-user-info p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+
+        .modal-user-info strong {
+            color: white;
         }
     </style>
 </head>
@@ -245,63 +361,17 @@
 
     <div id="intro-screen">
         <div id="error-message">
-            <p>Віджет Telegram не завантажився.</p>
-            <p>Будь ласка, перевірте підключення до Інтернету та налаштування домену бота в BotFather.</p>
-            <button onclick="hideErrorMessage()">Гаразд</button>
+            <p>Telegram widget failed to load.</p>
+            <p>Please check your internet connection and bot domain settings in BotFather.</p>
+            <button onclick="hideErrorMessage()">OK</button>
         </div>
-        <script async src="https://telegram.org/js/telegram-widget.js?19"
-                data-telegram-login="Weegamemytestbot"
-                data-size="large"
-                data-onauth="onTelegramAuth(user)"
-                data-request-access="write"></script>
-        <button id="telegram-login-button-fallback">Увійти з Telegram</button>
-    </div>
-
-    <div id="video-screen">
-        <video id="intro-video" muted playsinline>
-            <source src="video/intro.mp4" type="video/mp4">
-            Ваш браузер не підтримує тег video.
-        </video>
-    </div>
-
-    <div id="game-interface">
-        <div id="top-panel">
-            <div id="user-info">
-                <img id="user-avatar" src="https://via.placeholder.com/50/333/gold?text=А" alt="Аватар користувача">
-                <span id="user-login">Гість</span>
-            </div>
-            <div id="top-right-section">
-                <span id="season-text">SEASON 1</span>
-                <div class="top-menu-item">Ресурси</div>
-                <div class="top-menu-item">Налаштування</div>
-            </div>
-        </div>
-
-        <div id="main-content">
-            Ласкаво просимо до вашої гри!
-        </div>
-
-        <div id="bottom-panel">
-            <div class="menu-item">
-                <img src="https://via.placeholder.com/60/333/gold?text=База" alt="Іконка Бази">
-                <span>База</span>
-            </div>
-            <div class="menu-item">
-                <img src="https://via.placeholder.com/60/333/gold?text=Карта" alt="Іконка Карти">
-                <span>Карта</span>
-            </div>
-            <div class="menu-item">
-                <img src="https://via.placeholder.com/60/333/gold?text=Герої" alt="Іконка Героїв">
-                <span>Герої</span>
-            </div>
-            <div class="menu-item">
-                <img src="https://via.placeholder.com/60/333/gold?text=Альянс" alt="Іконка Альянсу">
-                <span>Альянс</span>
-            </div>
-            <div class="menu-item">
-                <img src="https://via.placeholder.com/60/333/gold?text=Пошта" alt="Іконка Пошти">
-                <span>Пошта</span>
-            </div>
+        <div id="telegram-widget-container">
+            <script async src="https://telegram.org/js/telegram-widget.js?19"
+                    data-telegram-login="Weegamemytestbot"
+                    data-size="large"
+                    data-onauth="onTelegramAuth(user)"
+                    data-request-access="write"></script>
+            <button id="telegram-login-button-fallback">Log in with Telegram</button>
         </div>
     </div>
 
@@ -309,57 +379,188 @@
         © 2024 WEEBWE LLC. All rights reserved.
     </div>
 
+    <div id="video-screen">
+        <video id="intro-video" muted playsinline>
+            <source src="video/intro.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div id="game-interface">
+        <div id="top-panel">
+            <div id="user-profile-section">
+                <span id="vip-level">VIP 5</span>
+                <img id="user-avatar" src="https://via.placeholder.com/50/333/gold?text=A" alt="User Avatar">
+                <span id="user-login">Guest</span>
+            </div>
+            <div id="resources-section">
+                <div class="resource-item">
+                    <span class="emoji">🍎</span> Food: <span id="resource-food">10000</span>
+                </div>
+                <div class="resource-item">
+                    <span class="emoji">🌳</span> Wood: <span id="resource-wood">5000</span>
+                </div>
+                <div class="resource-item">
+                    <span class="emoji">🪨</span> Stone: <span id="resource-stone">3000</span>
+                </div>
+                <div class="resource-item">
+                    <span class="emoji">⚙️</span> Metal: <span id="resource-metal">1000</span>
+                </div>
+                <div class="resource-item">
+                    <span class="emoji">💰</span> Gold: <span id="resource-gold">500</span>
+                </div>
+            </div>
+            <div id="top-right-section">
+                <span id="season-text">SEASON 1</span>
+                </div>
+        </div>
+
+        <div id="main-content">
+            Welcome to your game!
+        </div>
+
+        <div id="bottom-panel">
+            <div class="menu-item" id="menu-map">
+                <span class="emoji-icon">🗺️</span>
+                <span>World Map</span>
+            </div>
+            <div class="menu-item">
+                <span class="emoji-icon">📜</span>
+                <span>Quests</span>
+            </div>
+            <div class="menu-item">
+                <span class="emoji-icon">📦</span>
+                <span>Resources</span>
+            </div>
+            <div class="menu-item">
+                <span class="emoji-icon">✉️</span>
+                <span>Mail</span>
+            </div>
+            <div class="menu-item">
+                <span class="emoji-icon">🛡️</span>
+                <span>Alliance</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="user-profile-modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>User Profile</h2>
+            <img id="modal-user-avatar" class="modal-avatar" src="https://via.placeholder.com/100/333/gold?text=A" alt="User Avatar">
+            <div class="modal-user-info">
+                <p>Login: <strong id="modal-user-login">N/A</strong></p>
+                <p>First Name: <strong id="modal-first-name">N/A</strong></p>
+                <p>Last Name: <strong id="modal-last-name">N/A</strong></p>
+                <p>Username: <strong id="modal-username">N/A</strong></p>
+                <p>ID: <strong id="modal-id">N/A</strong></p>
+            </div>
+        </div>
+    </div>
+
     <audio id="background-music" loop>
         <source src="sound/Background.mp3" type="audio/mpeg">
-        Ваш браузер не підтримує аудіо.
+        Your browser does not support audio.
     </audio>
 
     <script>
         const introScreen = document.getElementById('intro-screen');
+        const telegramWidgetContainer = document.getElementById('telegram-widget-container');
         const telegramLoginButtonFallback = document.getElementById('telegram-login-button-fallback');
         const errorMessage = document.getElementById('error-message');
+        const copyrightFooter = document.getElementById('copyright-footer'); // Get copyright element
         const videoScreen = document.getElementById('video-screen');
         const introVideo = document.getElementById('intro-video');
         const gameInterface = document.getElementById('game-interface');
         const backgroundMusic = document.getElementById('background-music');
+
+        // Top panel elements
+        const userProfileSection = document.getElementById('user-profile-section');
         const userAvatar = document.getElementById('user-avatar');
         const userLogin = document.getElementById('user-login');
 
-        // Функція для показу повідомлення про помилку
+        // Bottom menu elements
+        const menuMap = document.getElementById('menu-map');
+
+        // Modal elements
+        const userProfileModal = document.getElementById('user-profile-modal');
+        const closeButton = userProfileModal.querySelector('.close-button');
+        const modalUserAvatar = document.getElementById('modal-user-avatar');
+        const modalUserLogin = document.getElementById('modal-user-login');
+        const modalFirstName = document.getElementById('modal-first-name');
+        const modalLastName = document.getElementById('modal-last-name');
+        const modalUsername = document.getElementById('modal-username');
+        const modalId = document.getElementById('modal-id');
+
+        let isMapIconCastle = false; // State for map icon
+
+
+        // --- Functions for managing UI elements ---
+
         function showErrorMessage() {
             errorMessage.style.display = 'block';
-            telegramLoginButtonFallback.style.display = 'block'; // Показуємо кастомну кнопку, якщо віджет не працює
+            telegramLoginButtonFallback.style.display = 'block';
         }
 
-        // Функція для приховування повідомлення про помилку
         function hideErrorMessage() {
             errorMessage.style.display = 'none';
         }
 
-        // Перевірка завантаження віджета Telegram через певний час
-        // Дає віджету шанс завантажитися і створити свою кнопку
+        function showVideoScreen() {
+            introScreen.style.display = 'none';
+            copyrightFooter.style.display = 'none'; // Hide copyright on video/game screens
+            videoScreen.style.display = 'block';
+        }
+
+        function showGameInterface() {
+            videoScreen.style.display = 'none';
+            gameInterface.style.display = 'flex'; // Use flex for column layout
+        }
+
+        function openUserProfileModal(userData) {
+            if (userData) {
+                if (userData.photo_url) {
+                    modalUserAvatar.src = userData.photo_url;
+                } else {
+                    modalUserAvatar.src = 'https://via.placeholder.com/100/333/gold?text=A'; // Default if no photo
+                }
+                modalUserLogin.textContent = userData.first_name + (userData.last_name ? ' ' + userData.last_name : '');
+                modalFirstName.textContent = userData.first_name || 'N/A';
+                modalLastName.textContent = userData.last_name || 'N/A';
+                modalUsername.textContent = userData.username ? `@${userData.username}` : 'N/A';
+                modalId.textContent = userData.id || 'N/A';
+            }
+            userProfileModal.style.display = 'flex'; // Use flex to center content
+        }
+
+        function closeUserProfileModal() {
+            userProfileModal.style.display = 'none';
+        }
+
+
+        // --- Event Listeners and Initial Setup ---
+
+        // Check for Telegram widget load status
         setTimeout(() => {
-            const telegramWidget = document.querySelector('.telegram_login_button'); // Віджет Telegram створює елемент з цим класом
+            const telegramWidget = document.querySelector('.telegram_login_button');
             if (!telegramWidget) {
-                // Якщо віджет не знайдено (не завантажився)
                 showErrorMessage();
-                // Додаємо обробник для нашої запасної кнопки
                 telegramLoginButtonFallback.onclick = () => {
-                    alert('Віджет Telegram не завантажився. Будь ласка, перевірте підключення до Інтернету та налаштування домену бота в BotFather. Якщо ви тестуєте локально, це може не працювати.');
-                    // Якщо ви тестуєте локально і віджет не працює, можете розкоментувати наступний рядок для симуляції авторизації:
-                    // onTelegramAuth({ id: 12345, first_name: 'Тестовий', last_name: 'Юзер', username: 'testuser', photo_url: 'https://via.placeholder.com/50/gold/black?text=Т' });
+                    alert('Telegram widget failed to load. Please check your internet connection and bot domain settings in BotFather.');
+                    // For local testing, you can uncomment this to simulate login:
+                    // onTelegramAuth({ id: 12345, first_name: 'Test', last_name: 'User', username: 'testuser', photo_url: 'https://via.placeholder.com/50/gold/black?text=T' });
                 };
             } else {
-                // Якщо віджет завантажився успішно, ховаємо нашу запасну кнопку
+                // If widget loaded, hide fallback button
                 telegramLoginButtonFallback.style.display = 'none';
             }
-        }, 3000); // Чекаємо 3 секунди
+        }, 3000); // Give 3 seconds for widget to load
 
-        // Функція, яка викликається віджетом Telegram після успішної авторизації
+        // Telegram Auth Callback - this function is called by the Telegram widget
         function onTelegramAuth(user) {
             console.log('Telegram User Info:', user);
 
-            // Оновлюємо інформацію про користувача
+            // Update top panel user info
             if (user.photo_url) {
                 userAvatar.src = user.photo_url;
             }
@@ -368,38 +569,62 @@
                 userLogin.textContent += ` (@${user.username})`;
             }
 
-            // Приховуємо початковий екран
-            introScreen.style.display = 'none';
+            // Store user data for modal
+            userProfileSection.userData = user;
 
-            // Показуємо екран з відео
-            videoScreen.style.display = 'block';
+            // Start the sequence: video -> game interface
+            showVideoScreen();
 
-            // Запускаємо фонову музику
+            // Try to play background music
             backgroundMusic.play().catch(error => {
-                console.error('Помилка відтворення фонової музики:', error);
-                // Попереджаємо користувача, якщо музика не може відтворитись автоматично
-                alert('Музика не відтворилася автоматично. Будь ласка, взаємодійте зі сторінкою, щоб вона запрацювала.');
+                console.error('Error playing background music:', error);
+                alert('Music did not auto-play. Please interact with the page to start it.');
             });
 
-            // Запускаємо вступне відео
+            // Try to play intro video
             introVideo.play().catch(error => {
-                console.error('Помилка відтворення відео:', error);
-                // Якщо не вдалося відтворити відео, переходимо до гри одразу
+                console.error('Error playing intro video:', error);
+                // Fallback: if video can't play, go straight to game interface
                 showGameInterface();
             });
         }
 
-        // Обробник події закінчення відео
+        // When intro video ends, show game interface
         introVideo.onended = () => {
             showGameInterface();
         };
 
-        function showGameInterface() {
-            videoScreen.style.display = 'none'; // Приховуємо відео екран
-            gameInterface.style.display = 'flex'; // Показуємо інтерфейс гри
-            // Переконайтесь, що музика продовжує грати
-            backgroundMusic.play().catch(error => console.error('Помилка продовження музики:', error));
-        }
+        // Open profile modal on avatar click
+        userProfileSection.addEventListener('click', () => {
+            if (userProfileSection.userData) {
+                openUserProfileModal(userProfileSection.userData);
+            } else {
+                alert('User data not available. Please log in.');
+            }
+        });
+
+        // Close modal on 'x' click
+        closeButton.addEventListener('click', closeUserProfileModal);
+
+        // Close modal on outside click
+        window.addEventListener('click', (event) => {
+            if (event.target == userProfileModal) {
+                closeUserProfileModal();
+            }
+        });
+
+        // Toggle map icon on click
+        menuMap.addEventListener('click', () => {
+            const mapEmoji = menuMap.querySelector('.emoji-icon');
+            if (isMapIconCastle) {
+                mapEmoji.textContent = '🗺️'; // World Map emoji
+                menuMap.querySelector('span:last-child').textContent = 'World Map';
+            } else {
+                mapEmoji.textContent = '🏰'; // Castle emoji
+                menuMap.querySelector('span:last-child').textContent = 'Castle';
+            }
+            isMapIconCastle = !isMapIconCastle;
+        });
 
     </script>
 </body>
